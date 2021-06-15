@@ -55,7 +55,7 @@ public class UserDAO {
         int rowsAffected = jdbcTemplate.update(
                 "INSERT INTO \"User\"(login, password, email, role, enabled)" +
                         "VALUES (?, ?, ?, ?, ?)",
-                user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.isEnabled()
+                user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.getEnabled()
         );
         log.info("user save: {}, rows affected: {}", user, rowsAffected);
         return rowsAffected!=0;

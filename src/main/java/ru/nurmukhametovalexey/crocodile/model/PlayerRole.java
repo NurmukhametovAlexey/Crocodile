@@ -1,6 +1,8 @@
 package ru.nurmukhametovalexey.crocodile.model;
 
-public enum PlayerRole {
+import java.io.Serializable;
+
+public enum PlayerRole implements Serializable {
     PAINTER,
     GUESSER,
     PAINTER_WINNER,

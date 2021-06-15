@@ -16,6 +16,9 @@ import java.util.List;
 @Component
 public class GameDAO {
 
+    private final String fullGameInfoTableQuery =
+            "select * from gameuser natural join \"User\" natural join game natural join dictionary ";
+
     private final JdbcTemplate jdbcTemplate;
     @Autowired
     public GameDAO(JdbcTemplate jdbcTemplate) {
@@ -25,7 +28,7 @@ public class GameDAO {
     @Nullable
     public Game getGameByUUID(String gameUUID) {
         return jdbcTemplate.query(
-                "select * from Game WHERE gameUUID=?",
+                fullGameInfoTableQuery + "WHERE gameUUID=?",
                 new GameMapper(),
                 gameUUID
         ).stream()
@@ -36,7 +39,7 @@ public class GameDAO {
     @Nullable
     public List<Game> getAll() {
         return jdbcTemplate.query(
-                "select * from Game",
+                fullGameInfoTableQuery,
                 new GameMapper()
         );
     }
@@ -44,7 +47,7 @@ public class GameDAO {
     @Nullable
     public List<Game> getGamesByStatus(GameStatus status) {
         return jdbcTemplate.query(
-                "select * from Game WHERE status=?",
+                fullGameInfoTableQuery + "WHERE status=?",
                 new GameMapper(),
                 status.toString()
         );
@@ -52,24 +55,60 @@ public class GameDAO {
 
     public boolean save(Game game) {
         int rowsAffected = jdbcTemplate.update(
-                "INSERT INTO Game(gameUUID, secretWord, timeStarted, timeFinished, status)" +
+                "INSERT INTO Game(gameUUID, word, timeStarted, timeFinished, status)" +
                         "VALUES (?, ?, ?, ?, ?)",
-                game.getGameUUID(), game.getSecretWord(),
+                game.getGameUUID(), game.getSecretWord().getWord(),
                 game.getTimeStarted(), game.getTimeFinished(), game.getStatus().toString()
         );
         log.info("game save: {}, rows affected: {}", game, rowsAffected);
+
+        if (game.getPainter() != null) {
+            jdbcTemplate.update(
+                    "INSERT INTO GameUser(gameUUID, userId, playerRole) VALUES (?, ?, ?)",
+                    game.getGameUUID(), game.getPainter().getUserId(), PlayerRole.PAINTER.toString()
+            );
+        }
+        log.info("gameUser painter save: {}", game.getPainter());
+
+        for (User guesser: game.getGuessers()) {
+            jdbcTemplate.update(
+                    "INSERT INTO GameUser(gameUUID, usderId, playerRole) VALUES (?, ?, ?)",
+                    game.getGameUUID(), guesser.getUserId(), PlayerRole.GUESSER.toString()
+            );
+            log.info("gameUser drawer save: {}", guesser);
+        }
 
         return rowsAffected!=0;
     }
 
     public boolean update(Game game) {
         int rowsAffected = jdbcTemplate.update(
-                "UPDATE Game SET gameUUID=?, secretWord=?, timeStarted=?, timeFinished=?, status=?",
-                game.getGameUUID(), game.getSecretWord(),
-                game.getTimeStarted(), game.getTimeFinished(), game.getStatus().toString()
+                "UPDATE Game SET word=?, timeStarted=?, timeFinished=?, status=?" +
+                        "WHERE gameUUID=?",
+                game.getSecretWord().getWord(), game.getTimeStarted(),
+                game.getTimeFinished(), game.getStatus().toString(),
+                game.getGameUUID()
         );
         log.info("game update: {}, rows affected: {}", game, rowsAffected);
 
+        if (game.getPainter() != null) {
+            jdbcTemplate.update(
+                    "INSERT INTO GameUser(gameUUID, userId, playerRole) VALUES (?, ?, ?)" +
+                            "ON CONFLICT (gameUUID, userId) DO NOTHING",
+                    game.getGameUUID(), game.getPainter().getUserId(), PlayerRole.PAINTER.toString()
+            );
+        }
+        log.info("gameUser painter update: {}", game.getPainter());
+
+        for (User guesser: game.getGuessers()) {
+            jdbcTemplate.update(
+                    "INSERT INTO GameUser(gameUUID, userId, playerRole) VALUES (?, ?, ?)" +
+                            "ON CONFLICT (gameUUID, userId) DO NOTHING",
+                    game.getGameUUID(), guesser.getUserId(), PlayerRole.GUESSER.toString()
+            );
+            log.info("gameUser guesser update: {}", guesser);
+        }
         return rowsAffected!=0;
     }
+
 }

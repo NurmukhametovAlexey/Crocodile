@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SecretWord {
     private String word;
-    private int difficulty;
+    private Integer difficulty;
 }

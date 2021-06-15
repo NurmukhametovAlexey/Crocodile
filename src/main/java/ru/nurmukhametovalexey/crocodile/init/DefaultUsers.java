@@ -28,6 +28,7 @@ public class DefaultUsers implements InitializingBean {
         user.setPassword(passwordEncoder.encode("admin"));
         user.setEmail("admin@mail.com");
         user.setRole("Admin");
+        user.setScore(0);
         user.setEnabled(true);
         try {
             userDAO.save(user);

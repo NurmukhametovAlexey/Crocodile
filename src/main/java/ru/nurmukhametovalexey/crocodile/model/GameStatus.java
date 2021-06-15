@@ -1,6 +1,8 @@
 package ru.nurmukhametovalexey.crocodile.model;
 
-public enum GameStatus {
+import java.io.Serializable;
+
+public enum GameStatus implements Serializable {
     NEW,
     IN_PROGRESS,
     FINISHED,

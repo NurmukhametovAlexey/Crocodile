@@ -22,7 +22,7 @@ CREATE TYPE gameStatus AS ENUM ('NEW', 'IN_PROGRESS', 'FINISHED','CANCELLED');
 
 CREATE TABLE Game (
                       gameUUID varchar(36) PRIMARY KEY NOT NULL,
-                      secretWord varchar(20) NOT NULL REFERENCES Dictionary(word),
+                      word varchar(20) NOT NULL REFERENCES Dictionary,
                       timeStarted timestamp,
                       timeFinished timestamp,
                       status gameStatus
@@ -36,4 +36,7 @@ CREATE TABLE GameUser (
                           playerRole playerStatus,
                           PRIMARY KEY (userId, gameUUID)
 );
+
+CREATE CAST (character varying AS gamestatus) WITH INOUT AS ASSIGNMENT;
+CREATE CAST (character varying AS playerstatus) WITH INOUT AS ASSIGNMENT;
 

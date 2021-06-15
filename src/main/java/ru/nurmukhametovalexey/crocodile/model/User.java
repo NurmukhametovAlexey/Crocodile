@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class User {
 
-    private int userId;
+    private Integer userId;
 
     @NotBlank(message = "Enter login")
     @Size(min = 2, max = 20, message = "Login should consist of 2 to 20 symbols")
@@ -33,8 +33,20 @@ public class User {
     private String role;
 
     @PositiveOrZero
-    private int score;
+    private Integer score;
 
-    private boolean enabled;
+    private Boolean enabled;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                ", score=" + score +
+                ", enabled=" + enabled +
+                '}';
+    }
 }
