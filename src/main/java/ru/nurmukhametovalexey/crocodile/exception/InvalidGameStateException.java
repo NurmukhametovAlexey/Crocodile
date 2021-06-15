@@ -1,4 +1,4 @@
-package ru.nurmukhametovalexey.crocodile.Exception;
+package ru.nurmukhametovalexey.crocodile.exception;
 
 public class InvalidGameStateException extends Exception {
     public InvalidGameStateException(String message) {

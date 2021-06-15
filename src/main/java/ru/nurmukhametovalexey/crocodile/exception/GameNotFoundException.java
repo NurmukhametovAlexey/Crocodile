@@ -1,4 +1,4 @@
-package ru.nurmukhametovalexey.crocodile.Exception;
+package ru.nurmukhametovalexey.crocodile.exception;
 
 public class GameNotFoundException extends Exception {
     public GameNotFoundException(String message) {
