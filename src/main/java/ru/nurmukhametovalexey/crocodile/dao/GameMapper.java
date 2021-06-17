@@ -37,7 +37,7 @@ public class GameMapper implements ResultSetExtractor<List<Game>> {
 
             PlayerRole playerRole = PlayerRole.valueOf(rs.getString("playerRole"));
 
-            log.info("Extracted playerRole: {} for player: {}", playerRole, player);
+            //log.info("Extracted playerRole: {} for player: {}", playerRole, player);
 
             String gameUUID = rs.getString("gameUUID");
 

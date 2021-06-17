@@ -1,13 +1,16 @@
 package ru.nurmukhametovalexey.crocodile.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 
-@Controller
+@Slf4j
+@RestController
 @RequestMapping("/user")
 public class UserController {
     private UserDAO userDAO;
@@ -17,9 +20,11 @@ public class UserController {
         this.userDAO = userDAO;
     }
 
-    @GetMapping()
-    public String getAllUsers(Model model) {
-        model.addAttribute("users", userDAO.getAll());
-        return "user/all";
+    @GetMapping("/leaderboard")
+    public ModelAndView getAllUsers() {
+        log.info("getAllUsers called");
+        ModelAndView modelAndView = new ModelAndView("user/leaderboard");
+        modelAndView.addObject("users", userDAO.getAll());
+        return modelAndView;
     }
 }

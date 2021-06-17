@@ -11,6 +11,6 @@ import ru.nurmukhametovalexey.crocodile.model.User;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StartRequest {
-    private User creator;
+    private String creatorLogin;
     private int difficulty;
 }

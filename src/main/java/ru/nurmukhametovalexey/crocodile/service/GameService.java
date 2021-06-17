@@ -3,10 +3,12 @@ package ru.nurmukhametovalexey.crocodile.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
 import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
 import ru.nurmukhametovalexey.crocodile.dao.GameDAO;
 import ru.nurmukhametovalexey.crocodile.dao.SecretWordDAO;
+import ru.nurmukhametovalexey.crocodile.exception.UserNotFoundException;
 import ru.nurmukhametovalexey.crocodile.model.*;
 
 import java.time.LocalDateTime;
@@ -18,14 +20,21 @@ public class GameService {
 
     private  final SecretWordDAO secretWordDAO;
     private final GameDAO gameDAO;
+    private final UserDAO userDAO;
 
     @Autowired
-    public GameService(SecretWordDAO secretWordDAO, GameDAO gameDAO) {
+    public GameService(SecretWordDAO secretWordDAO, GameDAO gameDAO, UserDAO userDAO) {
         this.secretWordDAO = secretWordDAO;
         this.gameDAO = gameDAO;
+        this.userDAO = userDAO;
     }
 
-    public Game createGame(User creator, int difficulty) {
+    public Game createGame(String creatorLogin, int difficulty) throws UserNotFoundException {
+        User creator = userDAO.getUserByLogin(creatorLogin);
+        if (creator == null) {
+            throw new UserNotFoundException("User does not exist: " + creatorLogin);
+        }
+
         SecretWord secretWord = new SecretWord();
         secretWord.setWord(secretWordDAO.getRandomWordByDifficulty(difficulty).getWord());
         secretWord.setDifficulty(difficulty);
@@ -42,7 +51,12 @@ public class GameService {
         return game;
     }
 
-    public Game connectByUUID(String gameUUID, User newPlayer, PlayerRole playerRole) throws GameNotFoundException, InvalidGameStateException {
+    public Game connectByUUID(String gameUUID, String newPlayerLogin, PlayerRole playerRole) throws GameNotFoundException, InvalidGameStateException, UserNotFoundException {
+        User newPlayer = userDAO.getUserByLogin(newPlayerLogin);
+        if(newPlayer == null) {
+            throw new UserNotFoundException("User does not exist: " + newPlayerLogin);
+        }
+
         Game game = gameDAO.getGameByUUID(gameUUID);
 
         log.info("got game: {}", game.toString());
@@ -73,6 +87,40 @@ public class GameService {
 
         gameDAO.update(game);
 
+        return game;
+    }
+
+    public Game gamePlay(GamePlayMessage message) throws GameNotFoundException, InvalidGameStateException {
+
+        Game game = gameDAO.getGameByUUID(message.getGameUUID());
+        if(game == null) {
+            throw new GameNotFoundException("Game not found: " + message.getGameUUID());
+        }
+        else if (game.getStatus() == GameStatus.FINISHED || game.getStatus() == GameStatus.CANCELLED) {
+            throw new InvalidGameStateException("Game is finished or cancelled: " + message.getGameUUID());
+        }
+
+        log.info("game.getSecretWord().getWord().toLowerCase(): {}", game.getSecretWord().getWord().toLowerCase());
+        log.info("message.getMessage().toLowerCase(): {}", message.getMessage().toLowerCase());
+
+        if(game.getSecretWord().getWord().toLowerCase().equals(message.getMessage().toLowerCase())) {
+            log.info("PLAYEEERRS WON!!!!" +
+                    "\tPAINTER LOGIN: " + game.getPainter().getLogin() +
+                    " \tGUESSER LOGIN: " + message.getUserLogin());
+            game.setStatus(GameStatus.FINISHED);
+            game.setTimeFinished(LocalDateTime.now());
+            gameDAO.update(game);
+
+            User user = game.getPainter();
+            user.increaseScore(10);
+            log.info("Painter: {} has score {}",user,user.getScore());
+            userDAO.update(user);
+
+            user = userDAO.getUserByLogin(message.getUserLogin());
+            user.increaseScore(10);
+            log.info("Guesser: {} has score {}",user,user.getScore());
+            userDAO.update(user);
+        }
         return game;
     }
 }

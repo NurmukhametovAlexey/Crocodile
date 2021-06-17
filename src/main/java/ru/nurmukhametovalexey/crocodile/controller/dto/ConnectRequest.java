@@ -13,6 +13,6 @@ import ru.nurmukhametovalexey.crocodile.model.User;
 @NoArgsConstructor
 public class ConnectRequest {
     String gameUUID;
-    User newPlayer;
+    String newPlayerLogin;
     PlayerRole playerRole;
 }

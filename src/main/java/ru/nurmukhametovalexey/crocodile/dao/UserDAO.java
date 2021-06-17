@@ -60,4 +60,15 @@ public class UserDAO {
         log.info("user save: {}, rows affected: {}", user, rowsAffected);
         return rowsAffected!=0;
     }
+
+    public boolean update(User user) {
+        int rowsAffected = jdbcTemplate.update(
+                "UPDATE \"User\" SET login=?, password=?, email=?, role=?, score=?, enabled=?" +
+                        "WHERE userId=?",
+                user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.getScore(), user.getEnabled(),
+                user.getUserId()
+        );
+        log.info("user update: {}, rows affected: {}", user, rowsAffected);
+        return rowsAffected!=0;
+    }
 }

@@ -49,4 +49,8 @@ public class User {
                 ", enabled=" + enabled +
                 '}';
     }
+
+    public void increaseScore(int inc) {
+        score += inc;
+    }
 }

@@ -12,4 +12,12 @@ import lombok.Setter;
 public class SecretWord {
     private String word;
     private Integer difficulty;
+
+    @Override
+    public String toString() {
+        return "SecretWord{" +
+                "word='" + word + '\'' +
+                ", difficulty=" + difficulty +
+                '}';
+    }
 }
