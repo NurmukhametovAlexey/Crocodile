@@ -1,9 +1,9 @@
 
 
 $( document ).ready(function() {
-    alert("game loaded");
+    //alert("game loaded");
     $("#btn-chat-message").click(function () {
-        alert("btn-chat-message");
+        //alert("btn-chat-message");
         writeMessage();
     });
 

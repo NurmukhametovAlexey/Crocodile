@@ -5,22 +5,42 @@
     <title>Game</title>
     <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="/js/game.js"></script>
+    <script type="text/javascript" src="/js/gameCanvas.js"></script>
 </head>
 <body>
 <div th:text="'Hello this is your game:' + ${game.toString()}"></div>
 
 <br/>
 
-<div id="chat" style="width: 100%; height: 150px; overflow-y: scroll;">
+<div id="chat" style="
+    width: 30%; height: 70%;
+    position: fixed;
+    left: 60%;
+    top: 10%;
+    border: thin black;
+    overflow-y: scroll;">
 </div>
-<form id="form-chat">
+
+<form id="form-chat" style="
+    width: 30%; height: 10%;
+    position: fixed;
+    left: 60%;
+    top: 80%;
+    text-align: center;">
+
     <label for="username">Username</label>
     <input type="text" id="username" />
+    <br/>
     <label for="msg">Message</label>
     <input type="text" id="msg" />
     <button id="btn-chat-message" type="button" class="btn-default">Submit</button>
 </form>
 
+<canvas id="canvas-game"
+        style="position: fixed;
+        left: 5%;
+        top: 10%;">
+</canvas>
 
 </body>
 </html>
