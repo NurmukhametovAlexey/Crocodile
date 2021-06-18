@@ -68,9 +68,16 @@ public class HomeController {
         } else {
             log.info("register-submit with user {} and BindingResult {}", user.toString(), bindingResult.toString());
         }
+
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("/register");
             //modelAndView.addObject("user", user);
+            return modelAndView;
+        }
+        else if(userDAO.getUserByLogin(user.getLogin()) != null) {
+            log.info("register-submit with user that already exists");
+            ModelAndView modelAndView = new ModelAndView("/register");
+            modelAndView.addObject("loginUsed", true);
             return modelAndView;
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));

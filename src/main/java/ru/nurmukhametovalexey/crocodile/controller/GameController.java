@@ -2,6 +2,7 @@ package ru.nurmukhametovalexey.crocodile.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -53,28 +54,47 @@ public class GameController {
     }*/
 
     @PostMapping("/start")
-    public ResponseEntity<Game> start(@RequestBody StartRequest startRequest) throws UserNotFoundException {
-        log.info("start game request: {}", startRequest.toString());
+    public ResponseEntity<?> start(@RequestBody StartRequest startRequest, Principal principal) throws UserNotFoundException {
+        //log.info("start game request: {}", startRequest.toString());
+        log.info("start game request difficulty: {}", startRequest.getDifficulty());
 
-        return ResponseEntity.ok(gameService.createGame(startRequest.getCreatorLogin(), startRequest.getDifficulty()));
+        if (principal == null) {
+            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        } else {
+            Game game = gameService.createGame(principal.getName(), startRequest.getDifficulty());
+            return ResponseEntity.ok(game);
+        }
     }
 
     @PostMapping("/connect")
-    public ResponseEntity<Game> connect(@RequestBody ConnectRequest connectRequest) throws InvalidGameStateException, GameNotFoundException, UserNotFoundException {
+    public ResponseEntity<?> connect(@RequestBody ConnectRequest connectRequest, Principal principal) throws InvalidGameStateException, GameNotFoundException, UserNotFoundException {
         log.info("connect game request: {}", connectRequest);
-        return ResponseEntity.ok(
-                gameService.connectByUUID(
-                        connectRequest.getGameUUID(),
-                        connectRequest.getNewPlayerLogin(),
-                        connectRequest.getPlayerRole()
-                ));
+
+        if (principal == null) {
+            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        } else {
+            Game game = gameService.connectByUUID(
+                    connectRequest.getGameUUID(),
+                    principal.getName(),
+                    connectRequest.getPlayerRole()
+            );
+            return ResponseEntity.ok(game);
+        }
     }
 
     @PostMapping("/gameplay")
-    public ResponseEntity<Game> gamePlay(@RequestBody GamePlayMessage message) throws InvalidGameStateException, GameNotFoundException {
+    public ResponseEntity<?> gamePlay(@RequestBody GamePlayMessage message, Principal principal) throws InvalidGameStateException, GameNotFoundException {
        log.info("gamePlay: {}", message);
-       Game game = gameService.gamePlay(message);
-       simpMessagingTemplate.convertAndSend("topic/game_progress/" + game.getGameUUID(),message);
-       return ResponseEntity.ok(game);
+
+        if (principal == null) {
+            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        } else {
+            message.setUserLogin(principal.getName());
+            Game game = gameService.gamePlay(message);
+            simpMessagingTemplate.convertAndSend("topic/game_progress/" + game.getGameUUID(),message);
+            return ResponseEntity.ok(game);
+        }
+
+
     }
 }

@@ -14,6 +14,16 @@ public class GamePlayMessage {
     private String gameUUID;
     private String userLogin;
 
+    /*@Override
+    public String toString() {
+        return "GamePlayMessage{" +
+                "message='" + message + '\'' +
+                ", gameUUID='" + gameUUID + '\'' +
+                '}';
+    }*/
+
+
+
     @Override
     public String toString() {
         return "GamePlayMessage{" +

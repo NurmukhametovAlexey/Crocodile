@@ -10,6 +10,7 @@
     <label for="login">Enter login: </label>
     <input type="text" th:field="*{login}" id="login"/>
     <div style="color:red" th:if="${#fields.hasErrors('login')}" th:errors="*{login}">Login Error</div>
+    <div style="color:red" th:if="${loginUsed}">This login is already used!</div>
     <br/>
     <label for="age">Enter password: </label>
     <input type="text" th:field="*{password}" id="age"/>

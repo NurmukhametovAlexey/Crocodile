@@ -1,7 +1,7 @@
 const url = 'http://localhost:8080';
 
 $( document ).ready(function() {
-    alert("Hello, wazzup? ");
+    //alert("Hello, wazzup? ");
 
     alert(currentUser);
 
@@ -15,7 +15,7 @@ $( document ).ready(function() {
             dataType: "json",
             contentType: "application/json",
             data: JSON.stringify({
-                "creatorLogin": "Bob",
+                //"creatorLogin": "Bob",
                 "difficulty": 2
             }),
             success: function (data) {
@@ -24,7 +24,8 @@ $( document ).ready(function() {
                 window.location.href = "/game?uuid="+gameUUID;
             },
             error: function (error) {
-                console.log(error);
+                alert(error);
+                //console.log(error);
             }
         });
     });
@@ -41,7 +42,7 @@ $( document ).ready(function() {
             contentType: "application/json",
             data: JSON.stringify({
                 "gameUUID": gameUUID,
-                "newPlayerLogin": "Alice",
+                //"newPlayerLogin": "Alice",
                 "playerRole": "GUESSER"
             }),
             success: function (data) {
@@ -49,7 +50,8 @@ $( document ).ready(function() {
                 window.location.href = "/game?uuid="+gameUUID;
             },
             error: function (error) {
-                console.log(error);
+                //console.log(error);
+                alert(error);
             }
         });
         });
