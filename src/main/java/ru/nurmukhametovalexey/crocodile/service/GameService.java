@@ -59,7 +59,6 @@ public class GameService {
 
         Game game = gameDAO.getGameByUUID(gameUUID);
 
-        log.info("got game: {}", game.toString());
 
         if (game == null) {
             throw new GameNotFoundException("Game with this UUID not found: " + gameUUID);
@@ -73,6 +72,8 @@ public class GameService {
                 )) {
             throw new InvalidGameStateException("Player is already connected to the game: " + gameUUID);
         }
+
+        log.info("got game: {}", game.toString());
 
         if(playerRole == PlayerRole.PAINTER) {
             if(game.getPainter() != null) {
