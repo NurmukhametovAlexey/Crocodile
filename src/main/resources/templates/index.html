@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Main page</title>
+    <script>
+        let currentUser = "[[${currentUser}]]";
+        </script>
     <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="/js/main.js"></script>
 </head>
 <body>
 Hello, its a staring page!
+
+<div th:text="'Current user is: ' +  ${currentUser}"/>
 
 <button id="btn-game-start" type="button" class="btn-default">New Game</button>
 
@@ -20,7 +25,15 @@ Hello, its a staring page!
 
 <br/>
 
-<a href="/user/leaderboard">Leaderboard</a>
+<a href="/leaderboard">Leaderboard</a>
+<br/>
+<a href="/login">Login</a>
+<br/>
+<form th:action="@{/logout}" method="post">
+    <input type="submit">POST LOGOUT</input>
+</form>
+<br/>
+<a href="/register">Register</a>
 
 <br/>
 

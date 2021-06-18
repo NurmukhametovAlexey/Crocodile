@@ -35,7 +35,6 @@ public class GameController {
         } else {
             log.info("principal is: " + principal.toString());
         }
-
         Game game = gameDAO.getGameByUUID(gameUUID);
         if (game == null) {
             throw new GameNotFoundException("Game not found: " + gameUUID);

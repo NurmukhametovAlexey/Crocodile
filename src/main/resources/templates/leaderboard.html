@@ -12,5 +12,9 @@ LeaderBoard:
   <a th:text="${user.getLogin()}">user</a>
 </div>
 
+<form th:action="@{/logout}" method="post">
+  <input type="submit">POST LOGOUT</input>
+</form>
+
 </body>
 </html>

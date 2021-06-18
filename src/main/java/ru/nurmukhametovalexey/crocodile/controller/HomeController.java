@@ -1,0 +1,94 @@
+package ru.nurmukhametovalexey.crocodile.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
+import ru.nurmukhametovalexey.crocodile.model.User;
+
+import javax.validation.Valid;
+import java.security.Principal;
+
+@Slf4j
+@RestController
+public class HomeController {
+    private UserDAO userDAO;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public HomeController(UserDAO userDAO, PasswordEncoder passwordEncoder) {
+        this.userDAO = userDAO;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @GetMapping()
+    public ModelAndView homePage(Principal principal) {
+        ModelAndView modelAndView = new ModelAndView("index");
+        if (principal != null) {
+            modelAndView.addObject("currentUser",principal.getName());
+        } else {
+            modelAndView.addObject("currentUser","Unknown");
+        };
+        return modelAndView;
+    }
+
+    @RequestMapping("/login")
+    public ModelAndView login() {
+        ModelAndView modelAndView = new ModelAndView("login");
+        return  modelAndView;
+    }
+
+    @RequestMapping("/login-error")
+    public ModelAndView loginError() {
+        ModelAndView modelAndView = new ModelAndView("login");
+        modelAndView.addObject("loginError", true);
+        return modelAndView;
+    }
+
+    @GetMapping("/register")
+    public ModelAndView newPerson(@ModelAttribute("user") User user) {
+        if (user == null) {
+            log.info("register with user null");
+        } else {
+            log.info("register with user {}", user.toString());
+        }
+
+        ModelAndView modelAndView = new ModelAndView("/register");
+        return modelAndView;
+    }
+
+    @PostMapping("/register-submit")
+    public ModelAndView create(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult) {
+        if (user == null) {
+            log.info("register-submit with user null");
+        } else {
+            log.info("register-submit with user {} and BindingResult {}", user.toString(), bindingResult.toString());
+        }
+        if (bindingResult.hasErrors()) {
+            ModelAndView modelAndView = new ModelAndView("/register");
+            //modelAndView.addObject("user", user);
+            return modelAndView;
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRole("User");
+            user.setScore(0);
+            user.setEnabled(true);
+            userDAO.save(user);
+            ModelAndView modelAndView = new ModelAndView("/login");
+            modelAndView.addObject("freshlyCreated", true);
+            return modelAndView;
+        }
+    }
+
+    @GetMapping("/leaderboard")
+    public ModelAndView getAllUsers() {
+        log.info("getAllUsers called");
+        ModelAndView modelAndView = new ModelAndView("leaderboard");
+        modelAndView.addObject("users", userDAO.getAll());
+        return modelAndView;
+    }
+}

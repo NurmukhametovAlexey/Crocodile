@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -32,7 +31,6 @@ public class User {
 
     private String role;
 
-    @PositiveOrZero
     private Integer score;
 
     private Boolean enabled;

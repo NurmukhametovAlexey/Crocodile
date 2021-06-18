@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,9 +24,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -41,6 +43,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 
+/*
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -52,6 +55,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+*/
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -63,12 +68,30 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable();
 
         http.authorizeRequests()
-               .antMatchers("/home","/").permitAll()
+               .antMatchers("/","/register","/register-submit").permitAll()
                 .antMatchers("/admin").hasRole("Admin")
-                .anyRequest().permitAll() /*.authenticated()*/
+                .anyRequest().authenticated()
+
                 .and()
-                .formLogin().permitAll().defaultSuccessUrl("/home")
+
+                .formLogin()
+                .loginPage("/login")
+                .failureUrl("/login-error")
+                .permitAll()
+                .defaultSuccessUrl("/")
+
                 .and()
-                .logout().invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll();
+
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/css/**", "/js/**","/webjars/**");
     }
 }

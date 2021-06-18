@@ -1,7 +1,9 @@
 const url = 'http://localhost:8080';
 
 $( document ).ready(function() {
-    //alert("Hello, wazzup?");
+    alert("Hello, wazzup? ");
+
+    alert(currentUser);
 
 
     $("#btn-game-start").click(function () {
