@@ -13,6 +13,15 @@ import ru.nurmukhametovalexey.crocodile.model.User;
 @NoArgsConstructor
 public class ConnectRequest {
     String gameUUID;
-    //String newPlayerLogin;
     PlayerRole playerRole;
+    Boolean reconnect = false;
+
+    @Override
+    public String toString() {
+        return "ConnectRequest{" +
+                "gameUUID='" + gameUUID + '\'' +
+                ", playerRole=" + playerRole +
+                ", reconnect=" + reconnect +
+                '}';
+    }
 }

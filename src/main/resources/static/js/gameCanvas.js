@@ -1,11 +1,12 @@
 $( document ).ready(function() {
 
     let cnv = document.getElementById("canvas-game");
-    cnv.height=window.innerHeight*0.8;
+    let window_height = window.innerHeight - $("#navbar-element").height();
+    cnv.height=window_height*0.7;
     cnv.width=window.innerWidth*0.6;
     cnv.style.border="1px solid blue";
 
-    alert("gameCanvas Loaded!");
+    alert("gameCanvas Loaded! " + cnv.height.toString());
 
     initPainting();
 });

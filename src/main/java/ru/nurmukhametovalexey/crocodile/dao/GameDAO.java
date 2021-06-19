@@ -53,6 +53,24 @@ public class GameDAO {
         );
     }
 
+    @Nullable
+    public List<Game> getGamesByLogin(String login) {
+        return jdbcTemplate.query(
+                fullGameInfoTableQuery + "WHERE login=?",
+                new GameMapper(),
+                login
+        );
+    }
+
+    @Nullable
+    public List<Game> getGamesByLoginAndStatus(String login, GameStatus status) {
+        return jdbcTemplate.query(
+                fullGameInfoTableQuery + "WHERE login=? AND status=?::gamestatus",
+                new GameMapper(),
+                login, status.toString()
+        );
+    }
+
     public boolean save(Game game) {
         int rowsAffected = jdbcTemplate.update(
                 "INSERT INTO Game(gameUUID, word, timeStarted, timeFinished, status)" +

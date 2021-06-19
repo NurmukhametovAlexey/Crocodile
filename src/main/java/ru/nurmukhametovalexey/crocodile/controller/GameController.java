@@ -54,7 +54,7 @@ public class GameController {
     }*/
 
     @PostMapping("/start")
-    public ResponseEntity<?> start(@RequestBody StartRequest startRequest, Principal principal) throws UserNotFoundException {
+    public ResponseEntity<?> start(@RequestBody StartRequest startRequest, Principal principal) throws UserNotFoundException, InvalidGameStateException {
         //log.info("start game request: {}", startRequest.toString());
         log.info("start game request difficulty: {}", startRequest.getDifficulty());
 
@@ -72,6 +72,10 @@ public class GameController {
 
         if (principal == null) {
             return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+        }
+        else if (connectRequest.getReconnect().booleanValue()) {
+            Game game = gameService.reconnect(principal.getName());
+            return ResponseEntity.ok(game);
         } else {
             Game game = gameService.connectByUUID(
                     connectRequest.getGameUUID(),
@@ -94,7 +98,5 @@ public class GameController {
             simpMessagingTemplate.convertAndSend("topic/game_progress/" + game.getGameUUID(),message);
             return ResponseEntity.ok(game);
         }
-
-
     }
 }

@@ -29,7 +29,13 @@ public class GameService {
         this.userDAO = userDAO;
     }
 
-    public Game createGame(String creatorLogin, int difficulty) throws UserNotFoundException {
+    public Game createGame(String creatorLogin, int difficulty) throws UserNotFoundException, InvalidGameStateException {
+
+        if(!gameDAO.getGamesByLoginAndStatus(creatorLogin, GameStatus.NEW).isEmpty()
+        || !gameDAO.getGamesByLoginAndStatus(creatorLogin, GameStatus.IN_PROGRESS).isEmpty()) {
+            throw new InvalidGameStateException("You are already in game");
+        }
+
         User creator = userDAO.getUserByLogin(creatorLogin);
         if (creator == null) {
             throw new UserNotFoundException("User does not exist: " + creatorLogin);
@@ -88,6 +94,18 @@ public class GameService {
 
         gameDAO.update(game);
 
+        return game;
+    }
+
+    public Game reconnect(String playerLogin) throws GameNotFoundException {
+        Game game = gameDAO.getGamesByLoginAndStatus(playerLogin, GameStatus.NEW).stream()
+                .findAny()
+                .orElse(null);
+        if (game == null) {
+            game = gameDAO.getGamesByLoginAndStatus(playerLogin, GameStatus.IN_PROGRESS).stream()
+                    .findAny()
+                    .orElseThrow(() -> new GameNotFoundException("No game to reconnect to!"));
+        }
         return game;
     }
 

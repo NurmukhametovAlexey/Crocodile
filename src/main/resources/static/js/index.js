@@ -4,6 +4,7 @@ $( document ).ready(function() {
     //alert("Hello, wazzup? ");
 
     alert(currentUser);
+    console.log("hello");
 
 
     $("#btn-game-start").click(function () {
@@ -14,6 +15,7 @@ $( document ).ready(function() {
             url:url + "/game/start",
             dataType: "json",
             contentType: "application/json",
+            //headers: "X-CSRF-Token: ",
             data: JSON.stringify({
                 //"creatorLogin": "Bob",
                 "difficulty": 2
@@ -23,9 +25,8 @@ $( document ).ready(function() {
                 let gameUUID = data.gameUUID;
                 window.location.href = "/game?uuid="+gameUUID;
             },
-            error: function (error) {
-                alert(error);
-                //console.log(error);
+            error: function () {
+                window.location.href = "/login";
             }
         });
     });
@@ -50,8 +51,8 @@ $( document ).ready(function() {
                 window.location.href = "/game?uuid="+gameUUID;
             },
             error: function (error) {
-                //console.log(error);
-                alert(error);
+                console.log(error);
+                window.location.href = "/login";
             }
         });
         });
