@@ -1,10 +1,8 @@
 const url = 'http://localhost:8080';
 
 $( document ).ready(function() {
-    //alert("Hello, wazzup? ");
 
-    alert(currentUser);
-    console.log("hello");
+    console.log("hello " + currentUser);
 
 
     $("#btn-game-start").click(function () {
@@ -12,7 +10,7 @@ $( document ).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url:url + "/game/start",
+            url: url + "/game/start",
             dataType: "json",
             contentType: "application/json",
             //headers: "X-CSRF-Token: ",

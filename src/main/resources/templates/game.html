@@ -8,11 +8,19 @@
 
     <title>Game</title>
 
+    <script>
+        let currentUser = "[[${currentUser}]]";
+        let gameUUID = "[[${game.getGameUUID()}]]";
+    </script>
+
+    <!--    libs for stomp and sockjs-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <!--    end libs for stomp and sockjs-->
+
     <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="/js/game.js"></script>
-    <script type="text/javascript" src="/js/gameCanvas.js"></script>
 </head>
 <body>
 
@@ -47,6 +55,7 @@
 <br/>
 
 <div th:text="'Hello this is your game:' + ${game.toString()}"></div>
+<div th:text="'Hello this is your principal:' + ${currentUser}"></div>
 
 <br/>
 <div id="chat" style="
@@ -79,5 +88,9 @@
         top: 20%;">
 </canvas>
 
+
+<script type="text/javascript" src="/js/game.js"></script>
+<script type="text/javascript" src="/js/gameCanvas.js"></script>
+<script type="text/javascript" src="/js/socket.js"></script>
 </body>
 </html>

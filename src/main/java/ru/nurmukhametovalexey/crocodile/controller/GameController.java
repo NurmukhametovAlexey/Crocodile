@@ -4,17 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import ru.nurmukhametovalexey.crocodile.dao.GameDAO;
-import ru.nurmukhametovalexey.crocodile.exception.UserNotFoundException;
-import ru.nurmukhametovalexey.crocodile.model.GamePlayMessage;
-import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
-import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
 import ru.nurmukhametovalexey.crocodile.controller.dto.ConnectRequest;
 import ru.nurmukhametovalexey.crocodile.controller.dto.StartRequest;
+import ru.nurmukhametovalexey.crocodile.dao.GameDAO;
+import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
+import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
+import ru.nurmukhametovalexey.crocodile.exception.UserNotFoundException;
 import ru.nurmukhametovalexey.crocodile.model.Game;
+import ru.nurmukhametovalexey.crocodile.model.GamePlayMessage;
 import ru.nurmukhametovalexey.crocodile.service.GameService;
 
 import java.security.Principal;
@@ -34,7 +35,7 @@ public class GameController {
         if (principal == null) {
             log.info("principal == null ");
         } else {
-            log.info("principal is: " + principal.toString());
+            log.info("principal is: " + principal);
         }
         Game game = gameDAO.getGameByUUID(gameUUID);
         if (game == null) {
@@ -43,7 +44,7 @@ public class GameController {
 
         ModelAndView modelAndView = new ModelAndView("/game");
         modelAndView.addObject(game);
-
+        modelAndView.addObject("currentUser", principal.getName());
         return modelAndView;
     }
 
@@ -95,8 +96,15 @@ public class GameController {
         } else {
             message.setUserLogin(principal.getName());
             Game game = gameService.gamePlay(message);
-            simpMessagingTemplate.convertAndSend("topic/game_progress/" + game.getGameUUID(),message);
+            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameUUID(), message);
+            log.info("simpMessagingTemplate sent message to /topic/game-progress/{}", game.getGameUUID());
             return ResponseEntity.ok(game);
         }
     }
+
+/*    @MessageMapping("/test")
+    public void response(GamePlayMessage message) {
+        log.info("@MessageMapping(\"/test\"): {}", message.toString());
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + message.getGameUUID(), message);
+    }*/
 }

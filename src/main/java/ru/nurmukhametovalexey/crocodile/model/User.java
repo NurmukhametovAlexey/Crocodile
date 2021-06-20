@@ -23,7 +23,7 @@ public class User {
 
     @NotBlank(message = "Enter password")
     @Size(min = 5, max = 20, message = "Password should consist of 5 to 20 symbols")
-    private String password;
+    private transient String password;
 
     @NotBlank(message = "Enter email")
     @Email(message = "Invalid email")
