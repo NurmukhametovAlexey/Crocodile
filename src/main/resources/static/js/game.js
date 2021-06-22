@@ -1,28 +1,41 @@
 $( document ).ready(function() {
 
     connectToSocket();
-       //alert("game loaded");
-    $("#btn-chat-message").click(function () {
-        //alert("btn-chat-message");
-        writeMessage();
 
 
-/*        stompClient.send("/app/test", {}, JSON.stringify(
-            {"message": "Hope this works!",
-                "gameUUID": gameUUID,
-                "userLogin": "test login"
-            }));*/
+    $("#form-chat").submit(function (event) {
+        event.preventDefault();
+
+        console.log("form-chat click");
+
+        let msg = document.getElementById("form-chat").msg.value;
+        stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
+            {
+                "type": "chat",
+                "message": msg
+            }));
     });
+
+    /*$("#btn-chat-message").click(function () {
+        //alert("btn-chat-message");
+
+        //writeMessage();
+        let msg = document.getElementById("form-chat").msg.value;
+
+        stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
+            {
+                "type": "chat",
+                "message": msg
+            }));
+    });*/
 });
 
-function writeMessage(){
-    let form = document.getElementById("form-chat");
+function writeMessage(message){
+    //let form = document.getElementById("form-chat");
     let now = new Date().toLocaleString()
-    let user = form.username.value;
-    let message = form.msg.value;
-    document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML + now  + " | " + user + " said: " + message + "<br />";
+    document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML + now  + " | " + message.sender + ": " + message.message + "<br />";
 
-    $.ajax({
+    /*$.ajax({
         url: url + "/game/gameplay",
         type: 'POST',
         dataType: "json",
@@ -38,6 +51,6 @@ function writeMessage(){
         error: function (error) {
             console.log(error);
         }
-    })
+    })*/
 
 }

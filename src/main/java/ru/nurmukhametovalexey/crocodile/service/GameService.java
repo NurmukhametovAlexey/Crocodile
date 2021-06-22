@@ -3,6 +3,7 @@ package ru.nurmukhametovalexey.crocodile.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketChatMessage;
 import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
 import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
@@ -31,10 +32,10 @@ public class GameService {
 
     public Game createGame(String creatorLogin, int difficulty) throws UserNotFoundException, InvalidGameStateException {
 
-        if(!gameDAO.getGamesByLoginAndStatus(creatorLogin, GameStatus.NEW).isEmpty()
+        /*if(!gameDAO.getGamesByLoginAndStatus(creatorLogin, GameStatus.NEW).isEmpty()
         || !gameDAO.getGamesByLoginAndStatus(creatorLogin, GameStatus.IN_PROGRESS).isEmpty()) {
             throw new InvalidGameStateException("You are already in game");
-        }
+        }*/
 
         User creator = userDAO.getUserByLogin(creatorLogin);
         if (creator == null) {
@@ -109,7 +110,7 @@ public class GameService {
         return game;
     }
 
-    public Game gamePlay(GamePlayMessage message) throws GameNotFoundException, InvalidGameStateException {
+    public Game gamePlay(ChatMessage message) throws GameNotFoundException, InvalidGameStateException {
 
         Game game = gameDAO.getGameByUUID(message.getGameUUID());
         if(game == null) {
@@ -125,7 +126,7 @@ public class GameService {
         if(game.getSecretWord().getWord().toLowerCase().equals(message.getMessage().toLowerCase())) {
             log.info("PLAYEEERRS WON!!!!" +
                     "\tPAINTER LOGIN: " + game.getPainter().getLogin() +
-                    " \tGUESSER LOGIN: " + message.getUserLogin());
+                    " \tGUESSER LOGIN: " + message.getLogin());
             game.setStatus(GameStatus.FINISHED);
             game.setTimeFinished(LocalDateTime.now());
             gameDAO.update(game);
@@ -135,7 +136,7 @@ public class GameService {
             log.info("Painter: {} has score {}",user,user.getScore());
             userDAO.update(user);
 
-            user = userDAO.getUserByLogin(message.getUserLogin());
+            user = userDAO.getUserByLogin(message.getLogin());
             user.increaseScore(10);
             log.info("Guesser: {} has score {}",user,user.getScore());
             userDAO.update(user);

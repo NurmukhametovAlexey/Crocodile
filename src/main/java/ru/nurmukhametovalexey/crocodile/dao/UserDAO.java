@@ -39,23 +39,13 @@ public class UserDAO {
                 .orElse(null);
     }
 
-    @Nullable
-    public User getUserById(int id) {
-        return jdbcTemplate.query(
-                "SELECT * FROM \"User\" WHERE userId=?",
-                new BeanPropertyRowMapper<>(User.class),
-                id
-        ).stream()
-                .findAny()
-                .orElse(null);
-    }
 
     public boolean save(User user) {
 
         int rowsAffected = jdbcTemplate.update(
-                "INSERT INTO \"User\"(login, password, email, role, enabled)" +
+                "INSERT INTO \"User\"(login, password, email, role, score, enabled)" +
                         "VALUES (?, ?, ?, ?, ?)",
-                user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.getEnabled()
+                user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.getScore(), user.getEnabled()
         );
         log.info("user save: {}, rows affected: {}", user, rowsAffected);
         return rowsAffected!=0;

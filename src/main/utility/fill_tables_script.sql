@@ -1,4 +1,4 @@
-INSERT INTO "User"(login, password, email, role, score)  VALUES (
+/*INSERT INTO "User"(login, password, email, role, score)  VALUES (
                                                                     'Bob', 'Bob', 'Bob.mail.ru', 'User', 0
                                                                 );
 INSERT INTO "User"(login, password, email, role, score)  VALUES (
@@ -6,7 +6,7 @@ INSERT INTO "User"(login, password, email, role, score)  VALUES (
                                                                 );
 INSERT INTO "User"(login, password, email, role, score)  VALUES (
                                                                     'John', 'John', 'John.mail.ru', 'User', 0
-                                                                );
+                                                                );*/
 
 ---------------------------------
 
@@ -19,9 +19,12 @@ INSERT INTO dictionary(word, difficulty) VALUES (
 INSERT INTO dictionary(word, difficulty) VALUES (
                                                     'book', 1
                                                 );
+INSERT INTO dictionary(word, difficulty) VALUES (
+                                                    'banana', 2
+                                                );
 
 ---------------------------------
-
+/*
 INSERT INTO Game(gameuuid, word, status) VALUES (
                                                           'qwe-rty-123', 'potato', 'NEW'
                                                       );
@@ -50,4 +53,4 @@ INSERT INTO gameuser(userid, gameuuid, playerrole) VALUES (
 
 INSERT INTO "User"(login, password, email, role, score) VALUES ('t', 't', 't', 't', 0),
                                                                ('e', 'e', 'e', 'e', 0),
-                                                               ('r', 'r', 'r', 'r', 0);
+                                                               ('r', 'r', 'r', 'r', 0);*/

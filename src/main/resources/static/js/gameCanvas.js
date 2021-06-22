@@ -16,8 +16,7 @@ let canvas_context;
 
 function initPainting() {
     canvas.source = $("#canvas-game");
-    canvas.context = canvas.source[0].getContext("2d");
-    canvas_context = canvas.context;
+    canvas_context = canvas.source[0].getContext("2d");
     initCanvas();
 }
 
@@ -37,17 +36,14 @@ function initCanvas() {
 
     canvas.source.bind("mousemove", function(e) {
         if (canvas.isPainting) {
-            let line = {x1:canvas.lastPoint.x, y1:canvas.lastPoint.y, x2: e.offsetX, y2: e.offsetY};
-            drawLine(line);
 
-            /*if (conn.readyState === 1) {
-                conn.send(JSON.stringify({
-                    sender:sender,
-                    type:"canvas",
-                    part:canvas.part,
-                    line:line
-                }));
-            }*/
+            stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify({
+                "type": "canvas",
+                "x_start": canvas.lastPoint.x,
+                "y_start": canvas.lastPoint.y,
+                "x_finish": e.offsetX,
+                "y_finish": e.offsetY
+            }));
 
             canvas.lastPoint = {x: e.offsetX, y: e.offsetY};
         }
@@ -62,11 +58,11 @@ function initCanvas() {
     })
 }
 
-function drawLine(line) {
-
+function drawLine(xStart, yStart, xFinish, yFinish) {
     canvas_context.beginPath();
-    canvas_context.moveTo(line.x1, line.y1);
-    canvas_context.lineTo(line.x2, line.y2);
+
+    canvas_context.moveTo(xStart, yStart);
+    canvas_context.lineTo(xFinish, yFinish);
 
     canvas_context.closePath();
     canvas_context.stroke();
