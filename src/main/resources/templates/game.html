@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
     <title>Game</title>
 
     <script>
-        let currentUser = "[[${currentUser}]]";
+        let currentUser = "[[${user}]]";
         let gameUUID = "[[${game.getGameUUID()}]]";
+        let gameStatus = "[[${game.getStatus()}]]";
+        let playerRole = "[[${userRole}]]";
+        let chat = "[[${chat}]]";
     </script>
 
     <!--    libs for stomp and sockjs-->
@@ -54,8 +57,6 @@
 <br/>
 <br/>
 
-<!--<div th:text="'Hello this is your game:' + ${game.toString()}"></div>
-<div th:text="'Hello this is your principal:' + ${currentUser}"></div>-->
 
 <br/>
 <div id="chat" style="
@@ -74,8 +75,8 @@
     top: 80%;
     text-align: center;">
 
-    <label for="msg">Chat: </label>
-    <input type="text" id="msg" />
+    <!--<label for="msg">Chat: </label>-->
+    <input type="text" id="msg" placeholder="Enter your message"/>
 </form>
 
 <canvas id="canvas-game"

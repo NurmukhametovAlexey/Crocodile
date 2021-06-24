@@ -1,9 +1,6 @@
 package ru.nurmukhametovalexey.crocodile.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -13,9 +10,8 @@ import javax.validation.constraints.Size;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class User {
-
-    private Integer userId;
 
     @NotBlank(message = "Enter login")
     @Size(min = 2, max = 20, message = "Login should consist of 2 to 20 symbols")
@@ -34,19 +30,6 @@ public class User {
     private Integer score;
 
     private Boolean enabled;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                ", score=" + score +
-                ", enabled=" + enabled +
-                '}';
-    }
 
     public void increaseScore(int inc) {
         score += inc;

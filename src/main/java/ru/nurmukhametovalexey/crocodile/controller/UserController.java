@@ -13,6 +13,4 @@ import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 @RequestMapping("/user")
 public class UserController {
 
-
-
 }

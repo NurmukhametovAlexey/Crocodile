@@ -44,7 +44,7 @@ public class UserDAO {
 
         int rowsAffected = jdbcTemplate.update(
                 "INSERT INTO \"User\"(login, password, email, role, score, enabled)" +
-                        "VALUES (?, ?, ?, ?, ?)",
+                        "VALUES (?, ?, ?, ?, ?, ?)",
                 user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.getScore(), user.getEnabled()
         );
         log.info("user save: {}, rows affected: {}", user, rowsAffected);
@@ -53,10 +53,10 @@ public class UserDAO {
 
     public boolean update(User user) {
         int rowsAffected = jdbcTemplate.update(
-                "UPDATE \"User\" SET login=?, password=?, email=?, role=?, score=?, enabled=?" +
-                        "WHERE userId=?",
-                user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.getScore(), user.getEnabled(),
-                user.getUserId()
+                "UPDATE \"User\" SET password=?, email=?, role=?, score=?, enabled=?" +
+                        "WHERE login=?",
+                user.getPassword(), user.getEmail(), user.getRole(), user.getScore(), user.getEnabled(),
+                user.getLogin()
         );
         log.info("user update: {}, rows affected: {}", user, rowsAffected);
         return rowsAffected!=0;

@@ -3,8 +3,6 @@ CREATE TABLE Dictionary (
                             difficulty int NOT NULL
 );
 
-CREATE SEQUENCE user_id_seq;
-
 CREATE TABLE "User" (
                         login varchar PRIMARY KEY,
                         password varchar NOT NULL,
@@ -35,13 +33,17 @@ CREATE TABLE GameUser (
 );
 
 CREATE TABLE Chat (
-                          message varchar,
-                          login int REFERENCES "User",
-                          gameUUID varchar(36) REFERENCES Game,
-                          timeSent timestamp,
-                          PRIMARY KEY (login, gameUUID, timeSent)
+                      message varchar,
+                      login varchar REFERENCES "User",
+                      gameUUID varchar(36) REFERENCES Game,
+                      timeSent timestamp,
+                      PRIMARY KEY (login, gameUUID, timeSent)
 );
 
+CREATE TABLE Canvas (
+                      picture bytea,
+                      gameUUID varchar(36) REFERENCES Game PRIMARY KEY
+);
 
 CREATE CAST (character varying AS gamestatus) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (character varying AS playerstatus) WITH INOUT AS ASSIGNMENT;

@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
     <title>Main page</title>
 
     <script>
-        let currentUser = "[[${currentUser}]]";
+        let currentUser = "[[${user}]]";
     </script>
 
     <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
@@ -19,34 +19,6 @@
 
 </head>
 <body>
-
-<!--<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top py-3">
-    <div class="container">
-        <a class="navbar-brand" href="/">Crocodile</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02"
-                aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarColor02">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/leaderboard">Leaderboard</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Log in</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Log out</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>-->
 
 <nav class="navbar navbar-expand-xl fixed-top" style="background-color: black">
     <!--<a href="#" class="navbar-brand"><img src="logo.png" width="300" height="60"></a>-->
@@ -80,21 +52,39 @@
 
 Hello, its a staring page!
 
-<div th:text="'Current user is: ' +  ${currentUser}"/>
+<div th:text="'Current user is: ' +  ${user}"/>
 
 <button id="btn-game-start" type="button" class="btn-default">New Game</button>
-
-<form id="form_game_connect">
-    <p><b>Game connect uuid:</b><br>
-        <input id="input_connect_uuid" type="text" size="36">
-    </p>
-</form>
+<br/>
 <button id="btn-game-connect" type="button" class="btn-default">Connect to game</button>
 
+<div class="form-popup" id="form-game-start">
+    <form th:method="POST" th:action="@{/game/start}" th:object="${startRequest}" class="form-container">
+        <h1>Game difficulty</h1>
+
+        <label for="difficulty"><b>Select difficulty</b></label>
+        <input id="difficulty" type="text" th:field="*{difficulty}" placeholder="difficulty" required>
+
+        <button type="submit" class="btn">Play</button>
+        <button id="form-game-start-close" type="button" class="btn cancel">Close</button>
+    </form>
+</div>
+
+
+<div class="form-popup" id="form-game-connect">
+    <form th:method="POST" th:action="@{/game/connect}" th:object="${connectRequest}" class="form-container">
+        <h1>Game UUID</h1>
+
+        <label for="difficulty"><b>Enter UUID</b></label>
+        <input type="text" th:field="*{gameUUID}" placeholder="UUID" id="gameUUID" required>
+
+        <button type="submit" class="btn">Connect</button>
+        <button id="form-game-connect-close" type="button" class="btn cancel" onclick="closeForm()">Close</button>
+    </form>
+</div>
+
+
 <br/>
-
-
-
 
 
 </body>

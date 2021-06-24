@@ -2,10 +2,13 @@ package ru.nurmukhametovalexey.crocodile.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import ru.nurmukhametovalexey.crocodile.controller.dto.ConnectRequest;
+import ru.nurmukhametovalexey.crocodile.controller.dto.StartRequest;
 import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 import ru.nurmukhametovalexey.crocodile.model.User;
 
@@ -25,13 +28,20 @@ public class HomeController {
     }
 
     @GetMapping()
-    public ModelAndView homePage(Principal principal) {
+    public ModelAndView homePage(@ModelAttribute("startRequest") StartRequest startRequest,
+                                 @ModelAttribute("connectRequest") ConnectRequest connectRequest, Principal principal) {
         ModelAndView modelAndView = new ModelAndView("index");
         if (principal != null) {
-            modelAndView.addObject("currentUser",principal.getName());
+            modelAndView.addObject("user",principal.getName());
         } else {
-            modelAndView.addObject("currentUser","Unknown");
+            modelAndView.addObject("user","Unknown");
         };
+        return modelAndView;
+    }
+
+    @GetMapping("/error")
+    public ModelAndView errorPage() {
+        ModelAndView modelAndView = new ModelAndView("error");
         return modelAndView;
     }
 
@@ -71,7 +81,6 @@ public class HomeController {
 
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView("/register");
-            //modelAndView.addObject("user", user);
             return modelAndView;
         }
         else if(userDAO.getUserByLogin(user.getLogin()) != null) {

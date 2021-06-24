@@ -1,15 +1,12 @@
 package ru.nurmukhametovalexey.crocodile.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import ru.nurmukhametovalexey.crocodile.model.User;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class StartRequest {
     //private String creatorLogin;
     private int difficulty;

@@ -6,30 +6,22 @@ $( document ).ready(function() {
 
 
     $("#btn-game-start").click(function () {
-        alert("btn-game-start");
+        openForm("form-game-start");
+    });
 
-        $.ajax({
-            type: 'POST',
-            url: url + "/game/start",
-            dataType: "json",
-            contentType: "application/json",
-            //headers: "X-CSRF-Token: ",
-            data: JSON.stringify({
-                //"creatorLogin": "Bob",
-                "difficulty": 2
-            }),
-            success: function (data) {
-                console.log(data);
-                let gameUUID = data.gameUUID;
-                window.location.href = "/game?uuid="+gameUUID;
-            },
-            error: function () {
-                window.location.href = "/login";
-            }
-        });
+    $("#form-game-start-close").click(function () {
+        closeForm("form-game-start");
     });
 
     $("#btn-game-connect").click(function () {
+        openForm("form-game-connect");
+    });
+
+    $("#form-game-connect-close").click(function () {
+        closeForm("form-game-connect");
+    });
+
+    /*$("#btn-game-connect").click(function () {
         let gameUUID = document.getElementById("input_connect_uuid").value;
 
         console.log("input: " + gameUUID);
@@ -53,8 +45,17 @@ $( document ).ready(function() {
                 window.location.href = "/login";
             }
         });
-        });
+        });*/
 });
+
+
+function openForm(formName) {
+    document.getElementById(formName).style.display = "block";
+}
+
+function closeForm(formName) {
+    document.getElementById(formName).style.display = "none";
+}
 
 
 

@@ -9,10 +9,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Game {
+public class Chat {
+    String message;
     String gameUUID;
-    String word;
-    LocalDateTime timeStarted;
-    LocalDateTime timeFinished;
-    GameStatus status;
+    String login;
+    LocalDateTime timeSent;
 }

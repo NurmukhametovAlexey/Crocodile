@@ -7,8 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class WebsocketChatMessage extends WebsocketMessage {
-    String message;
-    String sender;
-    Boolean victory;
+public class WebsocketStatusMessage extends WebsocketMessage {
+    private String status;
+    private String login;
 }
