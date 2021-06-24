@@ -29,6 +29,14 @@ public class UserDAO {
     }
 
     @Nullable
+    public List<User> getAllScoreDesc() {
+        return  jdbcTemplate.query(
+                "SELECT * FROM \"User\" ORDER BY score DESC",
+                new BeanPropertyRowMapper<>(User.class)
+        );
+    }
+
+    @Nullable
     public User getUserByLogin(String login) {
         return jdbcTemplate.query(
                 "SELECT * FROM \"User\" WHERE login=?",

@@ -1,11 +1,18 @@
-$( document ).ready(function() {
+let canvas_width;
+let canvas_height;
+let window_width;
+let window_height
 
+$( document ).ready(function() {
     connectToSocket();
+    window_height = window.innerHeight - $("#navbar-element").height();
+    window_width = window.innerWidth;
+    canvas_width = window_height*0.7;
+    canvas_height = window_width*0.45;
 
     let cnv = document.getElementById("canvas-game");
-    let window_height = window.innerHeight - $("#navbar-element").height();
-    cnv.height=window_height*0.7;
-    cnv.width=window.innerWidth*0.6;
+    cnv.height=canvas_width;
+    cnv.width=canvas_height;
     cnv.style.border="1px solid blue";
 
     console.log(chat);
@@ -23,23 +30,19 @@ $( document ).ready(function() {
     $("#form-chat").submit(function (event) {
         event.preventDefault();
 
-        //stompClient.disconnect();
-
         let msg = document.getElementById("form-chat").msg.value;
         stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
             {
                 "type": "chat",
                 "message": msg
             }));
+
+        document.getElementById("form-chat").reset();
     });
 
 });
 
 function writeMessage(message){
-
-    /*let now = new Date().toLocaleString()
-    document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML + now  + " | " + message.sender + ": " + message.message + "<br />";
-*/
     document.getElementById("chat").innerHTML =
         document.getElementById("chat").innerHTML + message + "<br />";
 }

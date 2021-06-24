@@ -10,11 +10,13 @@ import ru.nurmukhametovalexey.crocodile.exception.DictionaryException;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
 import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
 import ru.nurmukhametovalexey.crocodile.exception.UserNotFoundException;
+import ru.nurmukhametovalexey.crocodile.model.Chat;
 import ru.nurmukhametovalexey.crocodile.model.Game;
 import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
 import ru.nurmukhametovalexey.crocodile.service.GameService;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 
 @Slf4j
@@ -25,38 +27,6 @@ public class GameController {
     private final GameService gameService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
-    /*@GetMapping()
-    public ModelAndView displayGame(@RequestParam(value = "uuid") String gameUUID, Principal principal) throws GameNotFoundException {
-        log.info("display game: " + gameUUID);
-        if (principal == null) {
-            log.info("principal == null ");
-        } else {
-            log.info("principal is: " + principal);
-        }
-        GameDeprecated gameDeprecated = gameDAODeprecated.getGameByUUID(gameUUID);
-        if (gameDeprecated == null) {
-            throw new GameNotFoundException("Game not found: " + gameUUID);
-        }
-
-        ModelAndView modelAndView = new ModelAndView("/game");
-        modelAndView.addObject(gameDeprecated);
-        modelAndView.addObject("currentUser", principal.getName());
-        return modelAndView;
-    }*/
-
-    /*@PostMapping("/start")
-    public ResponseEntity<?> start(@RequestBody StartRequest startRequest, Principal principal) throws UserNotFoundException, InvalidGameStateException {
-        //log.info("start game request: {}", startRequest.toString());
-        log.info("start game request difficulty: {}", startRequest.getDifficulty());
-
-        if (principal == null) {
-            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        } else {
-            Game game = gameService.createGame(principal.getName(), startRequest.getDifficulty());
-            return ResponseEntity.ok(game);
-        }
-    }*/
-
     @PostMapping("/start")
     public ModelAndView start(@ModelAttribute("startRequest") StartRequest startRequest, Principal principal)
             throws UserNotFoundException, InvalidGameStateException {
@@ -64,7 +34,7 @@ public class GameController {
         log.info("start game request difficulty: {}", startRequest.getDifficulty());
 
         if (principal == null) {
-            ModelAndView modelAndView = new ModelAndView("login");
+            ModelAndView modelAndView = new ModelAndView("/login");
             return modelAndView;
         } else {
 
@@ -79,11 +49,11 @@ public class GameController {
 
             } catch (DictionaryException e) {
                 e.printStackTrace();
-                ModelAndView modelAndView = new ModelAndView("error");
+                ModelAndView modelAndView = new ModelAndView("/error");
                 return modelAndView;
             } catch (GameNotFoundException e) {
                 e.printStackTrace();
-                ModelAndView modelAndView = new ModelAndView("error");
+                ModelAndView modelAndView = new ModelAndView("/error");
                 return modelAndView;
             }
         }
@@ -99,7 +69,7 @@ public class GameController {
         }
 
         if (principal == null) {
-            ModelAndView modelAndView = new ModelAndView("login");
+            ModelAndView modelAndView = new ModelAndView("/login");
             return modelAndView;
         } else {
             try {
@@ -113,40 +83,23 @@ public class GameController {
             modelAndView.addObject("user", principal.getName());
             modelAndView.addObject("chat", gameService.loadChat(game.getGameUUID()));
 
-            WebsocketStatusMessage message = new WebsocketStatusMessage();
-            message.setStatus("connect");
-            message.setLogin(principal.getName());
-            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + connectRequest.getGameUUID(), message);
+            Chat chatMessage = new Chat();
+            chatMessage.setMessage("joined the chat");
+            chatMessage.setLogin(principal.getName());
+            chatMessage.setTimeSent(LocalDateTime.now());
+
+            WebsocketChatMessage websocketChatMessage = new WebsocketChatMessage();
+            websocketChatMessage.setMessage(gameService.chatMessageToString(chatMessage));
+            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + connectRequest.getGameUUID(), websocketChatMessage);
 
             return modelAndView;
 
         } catch (GameNotFoundException e) {
             e.printStackTrace();
-            ModelAndView modelAndView = new ModelAndView("error");
+            ModelAndView modelAndView = new ModelAndView("/error");
             return modelAndView;
         }
         }
     }
 
-    /*@PostMapping("/connect")
-    public ResponseEntity<?> connect(@RequestBody ConnectRequest connectRequest, Principal principal) throws InvalidGameStateException, GameNotFoundException, UserNotFoundException {
-        log.info("connect game request: {}", connectRequest);
-
-        if (principal == null) {
-            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
-        } else {
-            GameDeprecated gameDeprecated = gameService.connectByUUID(
-                    connectRequest.getGameUUID(),
-                    principal.getName(),
-                    connectRequest.getPlayerRole()
-            );
-
-            WebsocketStatusMessage message = new WebsocketStatusMessage();
-            message.setStatus("connect");
-            message.setLogin(principal.getName());
-            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + connectRequest.getGameUUID(), message);
-
-            return ResponseEntity.ok(gameDeprecated);
-        }
-    }*/
 }

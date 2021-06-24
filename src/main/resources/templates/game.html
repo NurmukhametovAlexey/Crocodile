@@ -41,13 +41,7 @@
         </div>
         <div class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/login">Log in</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="/logout">Log out</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/register">Register</a>
             </li>
         </div>
     </div>
@@ -56,6 +50,8 @@
 <br/>
 <br/>
 <br/>
+
+<div th:if="${userRole == 'PAINTER'}"> secret word: <b>[[${game.getWord()}]]</b> </div>
 
 
 <br/>
@@ -75,7 +71,6 @@
     top: 80%;
     text-align: center;">
 
-    <!--<label for="msg">Chat: </label>-->
     <input type="text" id="msg" placeholder="Enter your message"/>
 </form>
 
@@ -84,6 +79,7 @@
         left: 5%;
         top: 20%;">
 </canvas>
+
 
 
 <script type="text/javascript" src="/js/game.js"></script>

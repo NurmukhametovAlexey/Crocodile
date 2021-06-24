@@ -6,9 +6,9 @@ function connectToSocket() {
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
             console.log("connected to the frame: " + frame);
+
             stompClient.subscribe("/topic/game-progress/" + gameUUID, function (response) {
 
-                //console.log(response);
                 processWsMessage(response);
             });
         }
@@ -39,7 +39,6 @@ function processWsMessage(response) {
         console.log(data);
         let now = new Date().toLocaleString()
         document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML + now  + ": " + data.status + "<br />";
-
 
     }
 

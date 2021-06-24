@@ -30,30 +30,29 @@ public class HomeController {
     @GetMapping()
     public ModelAndView homePage(@ModelAttribute("startRequest") StartRequest startRequest,
                                  @ModelAttribute("connectRequest") ConnectRequest connectRequest, Principal principal) {
-        ModelAndView modelAndView = new ModelAndView("index");
+        ModelAndView modelAndView = new ModelAndView("/index");
         if (principal != null) {
             modelAndView.addObject("user",principal.getName());
-        } else {
-            modelAndView.addObject("user","Unknown");
         };
+
         return modelAndView;
     }
 
     @GetMapping("/error")
     public ModelAndView errorPage() {
-        ModelAndView modelAndView = new ModelAndView("error");
+        ModelAndView modelAndView = new ModelAndView("/error");
         return modelAndView;
     }
 
     @RequestMapping("/login")
     public ModelAndView login() {
-        ModelAndView modelAndView = new ModelAndView("login");
+        ModelAndView modelAndView = new ModelAndView("/login");
         return  modelAndView;
     }
 
     @RequestMapping("/login-error")
     public ModelAndView loginError() {
-        ModelAndView modelAndView = new ModelAndView("login");
+        ModelAndView modelAndView = new ModelAndView("/login");
         modelAndView.addObject("loginError", true);
         return modelAndView;
     }
@@ -101,10 +100,13 @@ public class HomeController {
     }
 
     @GetMapping("/leaderboard")
-    public ModelAndView getAllUsers() {
+    public ModelAndView getAllUsers(Principal principal) {
         log.info("getAllUsers called");
         ModelAndView modelAndView = new ModelAndView("leaderboard");
-        modelAndView.addObject("users", userDAO.getAll());
+        modelAndView.addObject("users", userDAO.getAllScoreDesc());
+        if (principal != null) {
+            modelAndView.addObject("user", principal.getName());
+        }
         return modelAndView;
     }
 }
