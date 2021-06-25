@@ -13,7 +13,9 @@ import ru.nurmukhametovalexey.crocodile.model.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -114,13 +116,6 @@ public class GameService {
             throw new InvalidGameStateException("Game is finished or cancelled: " + message.getGameUUID());
         }
 
-        /*Chat chat = new Chat();
-        chat.setTimeSent(LocalDateTime.now());
-        chat.setMessage(constructChatMessage(message.getLogin(), message.getMessage(), false));
-        chat.setGameUUID(game.getGameUUID());
-        chat.setLogin(message.getLogin());
-        daoService.getChatDAO().save(chat);*/
-
         daoService.getChatDAO().save(message);
 
         if(message.getMessage().equalsIgnoreCase(game.getWord())) {
@@ -137,26 +132,6 @@ public class GameService {
             game.setTimeFinished(LocalDateTime.now());
             daoService.getGameDAO().update(game);
 
-            GameUser gamePainter = daoService.getGameUserDAO().getGameUserByGameUuidAndRole(
-                    game.getGameUUID(), PlayerRole.PAINTER).stream()
-                    .findAny().orElseThrow(() -> new InvalidGameStateException("Game doesn`t have a painter!"));
-            gamePainter.setPlayerRole(PlayerRole.PAINTER_WINNER);
-
-            GameUser gameGuesser = daoService.getGameUserDAO().getByGameUuidAndLogin(game.getGameUUID(), message.getLogin());
-            if (gameGuesser == null) {
-                throw new InvalidGameStateException("Game doesn`t have a winning guesser!");
-            }
-            gameGuesser.setPlayerRole(PlayerRole.GUESSER_WINNER);
-
-            User painter = daoService.getUserDAO().getUserByLogin(gamePainter.getLogin());
-            painter.increaseScore(10);
-            log.info("Painter: {} has score {}",painter,painter.getScore());
-            daoService.getUserDAO().update(painter);
-
-            User guesser = daoService.getUserDAO().getUserByLogin(gameGuesser.getLogin());
-            guesser.increaseScore(10);
-            log.info("Guesser: {} has score {}",guesser,guesser.getScore());
-            daoService.getUserDAO().update(guesser);
         }
         return game;
     }
@@ -174,8 +149,39 @@ public class GameService {
     }
 
     public String chatMessageToString(Chat message) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return message.getTimeSent().format(formatter) + "| " + message.getLogin()
-                + ": " + message.getMessage();
+                + ": " + message.getMessage() + "";
+    }
+
+    public Map<String, Integer> increaseWinnersScore(String gameuuid, String guesserLogin) throws InvalidGameStateException, GameNotFoundException, DictionaryException {
+        Game game = daoService.getGameDAO().getGameByUUID(gameuuid);
+        GameUser gamePainter = daoService.getGameUserDAO().getGameUserByGameUuidAndRole(
+                game.getGameUUID(), PlayerRole.PAINTER).stream()
+                .findAny().orElseThrow(() -> new InvalidGameStateException("Game doesn`t have a painter!"));
+
+        GameUser gameGuesser = daoService.getGameUserDAO().getByGameUuidAndLogin(game.getGameUUID(), guesserLogin);
+        if (gameGuesser == null) {
+            throw new InvalidGameStateException("Game doesn`t have a winning guesser!");
+        }
+
+        Map<String, Integer> roleBountyMap = new HashMap<>();
+
+        User painter = daoService.getUserDAO().getUserByLogin(gamePainter.getLogin());
+        Integer painterBounty = daoService.getBountyByGameUUIDAndRole(gameuuid, PlayerRole.PAINTER);
+        painter.increaseScore(painterBounty);
+        log.info("Painter: {} has score {}",painter,painter.getScore());
+        daoService.getUserDAO().update(painter);
+        roleBountyMap.put("Painter " + painter.getLogin(), painterBounty);
+
+        User guesser = daoService.getUserDAO().getUserByLogin(gameGuesser.getLogin());
+        Integer guesserBounty = daoService.getBountyByGameUUIDAndRole(gameuuid, PlayerRole.GUESSER);
+        guesser.increaseScore(guesserBounty);
+        log.info("Guesser: {} has score {}",guesser,guesser.getScore());
+        daoService.getUserDAO().update(guesser);
+        roleBountyMap.put("Guesser " + guesser.getLogin(), guesserBounty);
+
+        return roleBountyMap;
     }
 }

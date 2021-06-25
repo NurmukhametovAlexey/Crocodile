@@ -40,6 +40,30 @@ $( document ).ready(function() {
         document.getElementById("form-chat").reset();
     });
 
+    $("#btn-canvas-clear").click(function (event) {
+        event.preventDefault();
+
+        stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
+            {
+                "type": "command",
+                "command": "clear canvas"
+            }));
+
+    });
+
+    $("#btn-game-link").click(function (event) {
+        event.preventDefault();
+
+        const el = document.createElement('textarea');
+        el.value = gameUUID;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    });
 });
 
 function writeMessage(message){

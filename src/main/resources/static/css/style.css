@@ -19,13 +19,33 @@ li, a {
 
 {box-sizing: border-box;}
 
+.index-page-contents {
+    position: absolute;
+    top: 30%;
+    left: 25%;
+    vert-align: middle;
+    text-align: center;
+    font-family: "Montserrat", sans-serif;
+    font-size: xx-large;
+    color: black;
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+.btn-index {
+    width: 60%;
+    height: 20%;
+    color: white;
+    background-color: black;
+}
 
 /* The popup form - hidden by default */
 .form-popup {
     display: none;
     position: fixed;
-    bottom: 30%;
-    right: 50%;
+    top: 30%;
+    left: 41%;
     border: 3px solid #f1f1f1;
     z-index: 9;
 }
@@ -82,4 +102,31 @@ li, a {
     box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
     transition: all .3s;
     padding: 40px 55px 45px 55px;
+}
+
+.game-chat {
+    font-family: "Montserrat", sans-serif;
+    font-size: medium;
+    color: black;
+    width: 30%;
+    height: 60%;
+    position: fixed;
+    left: 60%;
+    top: 20%;
+    border: thin black;
+    overflow-y: scroll;
+}
+
+.game-chat-form {
+    font-size: medium;
+    width: 40%;
+    height: 15%;
+    position: fixed;
+    left: 60%;
+    top: 80%;
+    text-align: center;
+}
+.btn-game {
+    font-family: "Montserrat", sans-serif;
+    color: black;
 }

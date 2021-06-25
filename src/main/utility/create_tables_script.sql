@@ -23,7 +23,7 @@ CREATE TABLE Game (
                       status gameStatus
 );
 
-CREATE TYPE playerStatus AS ENUM ('PAINTER', 'GUESSER','PAINTER_WINNER', 'GUESSER_WINNER');
+CREATE TYPE playerStatus AS ENUM ('PAINTER', 'GUESSER');
 
 CREATE TABLE GameUser (
                           login varchar REFERENCES "User",

@@ -11,7 +11,7 @@ import lombok.ToString;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = WebsocketChatMessage.class, name = "chat"),
         @JsonSubTypes.Type(value = WebsocketCanvasMessage.class, name = "canvas"),
-        @JsonSubTypes.Type(value = WebsocketStatusMessage.class, name = "status"),
+        @JsonSubTypes.Type(value = WebsocketCommandMessage.class, name = "command"),
 })
 public abstract class WebsocketMessage {
 }

@@ -35,11 +35,14 @@
             <li th:if="${user == null}" class="nav-item">
                 <a class="nav-link" href="/login">Log in</a>
             </li>
-            <li th:if="${user != null}" class="nav-item">
-                <a class="nav-link" href="/logout">Log out</a>
-            </li>
             <li th:if="${user == null}" class="nav-item">
                 <a class="nav-link" href="/register">Register</a>
+            </li>
+            <li th:if="${user != null}" class="nav-item">
+                <a class="nav-link" href="/user">My profile</a>
+            </li>
+            <li th:if="${user != null}" class="nav-item">
+                <a class="nav-link" href="/logout">Log out</a>
             </li>
         </div>
     </div>
@@ -49,13 +52,20 @@
 <br/>
 <br/>
 
-Hello, its a staring page!
+<div id="index-page" class="index-page-contents">
 
-<div th:text="'Current user is: ' +  ${user}"/>
+    <div th:if="${user!=null}" th:text="'Hello, ' +  ${user} + '!'"/>
+    <div th:if="${user==null}"> Hello, stranger! Please login to play the game.</div>
+    <br/>
+    <button id="btn-game-start" type="button" class="btn-index">New Game</button>
+    <br/>
+    <br/>
+    <button id="btn-game-connect" type="button" class="btn-index">Connect to game</button>
+    <br/>
+    <br/>
+    <button id="btn-game-reconnect" type="button" class="btn-index">Reconnect to game</button>
 
-<button id="btn-game-start" type="button" class="btn-default">New Game</button>
-<br/>
-<button id="btn-game-connect" type="button" class="btn-default">Connect to game</button>
+</div>
 
 <div class="form-popup" id="form-game-start">
     <form th:method="POST" th:action="@{/game/start}" th:object="${startRequest}" class="form-container">
@@ -81,8 +91,6 @@ Hello, its a staring page!
         <button id="form-game-connect-close" type="button" class="btn cancel" onclick="closeForm()">Close</button>
     </form>
 </div>
-
-<br/>
 
 </body>
 </html>

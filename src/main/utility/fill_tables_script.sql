@@ -10,18 +10,9 @@ INSERT INTO "User"(login, password, email, role, score)  VALUES (
 
 ---------------------------------
 
-INSERT INTO dictionary(word, difficulty) VALUES (
-                                                    'potato', 1
-                                                );
-INSERT INTO dictionary(word, difficulty) VALUES (
-                                                    'apple', 2
-                                                );
-INSERT INTO dictionary(word, difficulty) VALUES (
-                                                    'book', 1
-                                                );
-INSERT INTO dictionary(word, difficulty) VALUES (
-                                                    'banana', 2
-                                                );
+INSERT INTO dictionary(word, difficulty) VALUES ('potato', 1), ('apple', 2), ('book', 1), ('banana', 2), ('life', 3),
+                                                ('sun', 1), ('computer', 3);
+
 
 ---------------------------------
 /*

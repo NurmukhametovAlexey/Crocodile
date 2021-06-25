@@ -51,4 +51,15 @@ public class DaoService {
         return difficulty;
     }
 
+    @Nullable
+    public Integer getBountyByGameUUIDAndRole(String gameUUID, PlayerRole playerRole)
+            throws InvalidGameStateException, GameNotFoundException, DictionaryException {
+        Integer initialPoints = 1;
+        if (playerRole == PlayerRole.GUESSER) {
+            initialPoints *= gameUserDAO.getGameUserByGameUuidAndRole(gameUUID, PlayerRole.GUESSER).size();
+        }
+        Integer difficulty = getDifficultyByGameUUID(gameUUID);
+        return initialPoints*difficulty;
+    }
+
 }

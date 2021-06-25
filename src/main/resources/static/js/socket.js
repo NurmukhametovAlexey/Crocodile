@@ -34,14 +34,15 @@ function processWsMessage(response) {
             disableCanvas();
         }
 
-    }  else if (data.type == "status") {
+
+    }  else if (data.type === "command") {
 
         console.log(data);
-        let now = new Date().toLocaleString()
-        document.getElementById("chat").innerHTML = document.getElementById("chat").innerHTML + now  + ": " + data.status + "<br />";
 
-    }
-
-
+        if (data.command === "clear canvas") {
+            console.log("im here");
+            canvas_context.clearRect(0, 0, canvas.source[0].width, canvas.source[0].height);
+        }
+    };
 
 }

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
-    <title>New user</title>
+    <title>Account</title>
 
     <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
@@ -15,7 +15,6 @@
 <body>
 
 <nav class="navbar navbar-expand-xl fixed-top" style="background-color: black">
-    <!--<a href="#" class="navbar-brand"><img src="logo.png" width="300" height="60"></a>-->
     <a class="navbar-brand" href="/">Crocodile</a>
     <button class="navbar-toggler navbar-dark" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,7 +27,7 @@
         </div>
         <div class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/login">Log in</a>
+                <a class="nav-link" href="/logout">Log out</a>
             </li>
 
         </div>
@@ -39,21 +38,26 @@
 <br/>
 <br/>
 
-<form th:method="POST" th:action="@{/register-submit}" th:object="${user}">
-    <label for="login">Enter login: </label>
-    <input type="text" th:field="*{login}" id="login"/>
-    <div style="color:red" th:if="${#fields.hasErrors('login')}" th:errors="*{login}">Login Error</div>
-    <div style="color:red" th:if="${loginUsed}">This login is already used!</div>
+<div th:text="${user.toString()}"> </div>
+
+<form th:method="POST" th:action="@{/user}" th:object="${user}">
+    <label for="login">Login: </label>
+    <input type="text" th:field="*{login}" id="login" disabled/>
     <br/>
-    <label for="password">Enter password: </label>
+    <label for="password">New password: </label>
     <input type="text" th:field="*{password}" id="password"/>
     <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
     <br/>
-    <label for="email">Enter email: </label>
+    <label for="email">Email: </label>
     <input type="text" th:field="*{email}" id="email"/>
     <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
     <br/>
-    <input type="submit" value="Create!"/>
+    <label for="score">Score: </label>
+    <input type="text" th:field="*{score}" id="score" disabled/>
+    <br/>
+    <input type="submit" value="Update!"/>
+
+</form>
 
 </form>
 </body>

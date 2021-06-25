@@ -4,9 +4,7 @@ import java.io.Serializable;
 
 public enum PlayerRole implements Serializable {
     PAINTER,
-    GUESSER,
-    PAINTER_WINNER,
-    GUESSER_WINNER;
+    GUESSER;
 
     @Override
     public String toString() {
@@ -15,10 +13,6 @@ public enum PlayerRole implements Serializable {
                 return "PAINTER";
             case GUESSER:
                 return "GUESSER";
-            case PAINTER_WINNER:
-                return "PAINTER_WINNER";
-            case GUESSER_WINNER:
-                return "GUESSER_WINNER";
             default:
                 throw new IllegalArgumentException();
         }
