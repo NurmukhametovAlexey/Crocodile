@@ -64,28 +64,26 @@ public class WebSocketController {
 
             ((WebsocketChatMessage) message).setMessage(gameService.chatMessageToString(chatMessage));
 
-            if(game.getStatus() != GameStatus.FINISHED) {
-                return  message;
-            } else {
+            if (game.getStatus() == GameStatus.FINISHED) {
                 simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
 
                 message = new WebsocketChatMessage();
                 ((WebsocketChatMessage) message).setMessage("\"" +
-                        ((WebsocketChatMessage) message).getMessage() + "\" is the right word!!!");
+                        (game.getWord() + "\" is the right word!!!"));
                 ((WebsocketChatMessage) message).setSender(principal.getName());
                 ((WebsocketChatMessage) message).setVictory(true);
                 simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
 
                 Map<String, Integer> winnersBounty = gameService.increaseWinnersScore(gameUUID, principal.getName());
-                for(var entry: winnersBounty.entrySet()) {
+                for (var entry : winnersBounty.entrySet()) {
                     ((WebsocketChatMessage) message).setMessage(entry.getKey() + " gets " + entry.getValue() + " points!");
                     ((WebsocketChatMessage) message).setSender(principal.getName());
                     simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
                 }
                 ((WebsocketChatMessage) message).setMessage("GAME FINISHED!");
                 ((WebsocketChatMessage) message).setSender(principal.getName());
-                return message;
             }
+            return  message;
 
         }
         log.info("returning unknown message {} to /topic/game-progress/{}", message,gameUUID);

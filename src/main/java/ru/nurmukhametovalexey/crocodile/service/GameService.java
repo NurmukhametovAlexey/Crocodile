@@ -98,7 +98,7 @@ public class GameService {
 
         Chat chat = new Chat();
         chat.setTimeSent(LocalDateTime.now());
-        chat.setMessage("joined the chat");
+        chat.setMessage("joined as guesser");
         chat.setGameUUID(game.getGameUUID());
         chat.setLogin(newPlayerLogin);
         daoService.getChatDAO().save(chat);

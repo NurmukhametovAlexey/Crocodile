@@ -27,6 +27,33 @@ public class GameController {
     private final GameService gameService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
+    @GetMapping("/{gameUUID}")
+    public ModelAndView show(@PathVariable String gameUUID, Principal principal) {
+        if (principal == null) {
+            ModelAndView modelAndView = new ModelAndView("/login");
+            return modelAndView;
+        } else {
+            try {
+                Game game = gameService.getDaoService().getGameDAO().getGameByUUID(gameUUID);
+                PlayerRole playerRole = gameService.getDaoService().getGameUserDAO()
+                        .getByGameUuidAndLogin(gameUUID, principal.getName()).getPlayerRole();
+
+                ModelAndView modelAndView = new ModelAndView("/game");
+                modelAndView.addObject("game", game);
+                modelAndView.addObject("user", principal.getName());
+                modelAndView.addObject("userRole", playerRole.toString());
+                modelAndView.addObject("chat", gameService.loadChat(game.getGameUUID()));
+                return modelAndView;
+            }
+            catch (GameNotFoundException e) {
+                e.printStackTrace();
+                ModelAndView modelAndView = new ModelAndView("/error");
+                return modelAndView;
+            }
+
+        }
+    }
+
     @PostMapping("/start")
     public ModelAndView start(@ModelAttribute("startRequest") StartRequest startRequest, Principal principal)
             throws UserNotFoundException, InvalidGameStateException {
@@ -40,18 +67,10 @@ public class GameController {
 
             try {
                 Game game = gameService.createGame(principal.getName(), startRequest.getDifficulty());
-                ModelAndView modelAndView = new ModelAndView("/game");
-                modelAndView.addObject("game", game);
-                modelAndView.addObject("user", principal.getName());
-                modelAndView.addObject("userRole", PlayerRole.PAINTER.toString());
-                modelAndView.addObject("chat", gameService.loadChat(game.getGameUUID()));
+                ModelAndView modelAndView = new ModelAndView("redirect:/game/" + game.getGameUUID());
                 return modelAndView;
 
             } catch (DictionaryException e) {
-                e.printStackTrace();
-                ModelAndView modelAndView = new ModelAndView("/error");
-                return modelAndView;
-            } catch (GameNotFoundException e) {
                 e.printStackTrace();
                 ModelAndView modelAndView = new ModelAndView("/error");
                 return modelAndView;
@@ -64,7 +83,7 @@ public class GameController {
             throws InvalidGameStateException, UserNotFoundException {
         log.info("connect game request: {}", connectRequest);
 
-        if(connectRequest.getPlayerRole() == null) {
+        if (connectRequest.getPlayerRole() == null) {
             connectRequest.setPlayerRole(PlayerRole.GUESSER);
         }
 
@@ -78,15 +97,18 @@ public class GameController {
                     principal.getName(),
                     connectRequest.getPlayerRole()
             );
-            ModelAndView modelAndView = new ModelAndView("/game");
-            modelAndView.addObject("game", game);
-            modelAndView.addObject("user", principal.getName());
-            modelAndView.addObject("chat", gameService.loadChat(game.getGameUUID()));
+            ModelAndView modelAndView = new ModelAndView("redirect:/game/" + game.getGameUUID());
 
             Chat chatMessage = new Chat();
             chatMessage.setMessage("joined the chat");
             chatMessage.setLogin(principal.getName());
             chatMessage.setTimeSent(LocalDateTime.now());
+
+            chatMessage = gameService.getDaoService().getChatDAO().getChatByGameUUID(game.getGameUUID())
+                    .stream()
+                    .filter(msg -> msg.getLogin().equals(principal.getName()))
+                    .findAny()
+                    .orElse(null);
 
             WebsocketChatMessage websocketChatMessage = new WebsocketChatMessage();
             websocketChatMessage.setMessage(gameService.chatMessageToString(chatMessage));

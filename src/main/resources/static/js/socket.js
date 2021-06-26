@@ -40,7 +40,7 @@ function processWsMessage(response) {
         console.log(data);
 
         if (data.command === "clear canvas") {
-            console.log("im here");
+            console.log("clear canvas");
             canvas_context.clearRect(0, 0, canvas.source[0].width, canvas.source[0].height);
         }
     };
