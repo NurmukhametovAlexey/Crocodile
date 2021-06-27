@@ -78,6 +78,9 @@ public class GameService {
         if (game == null) {
             throw new GameNotFoundException("Game with uuid not found: " + gameUUID);
         }
+        else if (game.getStatus() == GameStatus.IN_PROGRESS) {
+            throw new InvalidGameStateException("Game is already in progress: " + gameUUID);
+        }
         else if (game.getStatus() == GameStatus.FINISHED || game.getStatus() == GameStatus.CANCELLED) {
             throw new InvalidGameStateException("Game is already finished: " + gameUUID);
         }
@@ -116,9 +119,7 @@ public class GameService {
             throw new InvalidGameStateException("Game is finished or cancelled: " + message.getGameUUID());
         }
 
-        daoService.getChatDAO().save(message);
-
-        if(message.getMessage().equalsIgnoreCase(game.getWord())) {
+        if(message.getMessage().equalsIgnoreCase(game.getWord()) && game.getStatus() == GameStatus.IN_PROGRESS) {
             log.info("PLAYERS WON!!!");
 
             Chat chat = new Chat();

@@ -40,6 +40,12 @@
             <li><a class="nav-link" href="/leaderboard">Leaderboard</a></li>
         </div>
         <div class="navbar-nav ml-auto">
+            <li th:if="${userRole} == 'PAINTER'" class="nav-item">
+                <a class="nav-link" id="link-game-cancel" href="/">Cancel the game</a>
+            </li>
+            <li th:if="${userRole} != 'PAINTER'" class="nav-item">
+                <a class="nav-link" id="link-game-leave" href="/">Leave</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/logout">Log out</a>
             </li>
@@ -85,10 +91,16 @@
     Clear canvas
 </button>
 
+<button th:if="${userRole == 'PAINTER'}" id="btn-start-game" style="position: fixed;
+        left: 30%;
+        top: 90%;" class="btn-game">
+    Start the game
+</button>
+
 
 
 <script type="text/javascript" src="/js/game.js"></script>
-<script type="text/javascript" src="/js/gameCanvas.js"></script>
+<script type="text/javascript" src="/js/canvas_and_chat.js"></script>
 <script type="text/javascript" src="/js/socket.js"></script>
 </body>
 </html>

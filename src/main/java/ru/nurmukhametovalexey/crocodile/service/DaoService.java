@@ -10,11 +10,9 @@ import ru.nurmukhametovalexey.crocodile.dao.*;
 import ru.nurmukhametovalexey.crocodile.exception.DictionaryException;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
 import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
-import ru.nurmukhametovalexey.crocodile.model.Game;
-import ru.nurmukhametovalexey.crocodile.model.GameUser;
-import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
-import ru.nurmukhametovalexey.crocodile.model.User;
+import ru.nurmukhametovalexey.crocodile.model.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,6 +58,16 @@ public class DaoService {
         }
         Integer difficulty = getDifficultyByGameUUID(gameUUID);
         return initialPoints*difficulty;
+    }
+
+    public Chat saveChatMessage(String gameUUID, String login, String message) {
+        Chat chatMessage = new Chat();
+        chatMessage.setGameUUID(gameUUID);
+        chatMessage.setLogin(login);
+        chatMessage.setMessage(message);
+        chatMessage.setTimeSent(LocalDateTime.now());
+        chatDAO.save(chatMessage);
+        return chatMessage;
     }
 
 }

@@ -36,57 +36,114 @@ public class WebSocketController {
     public WebsocketMessage handleWsMessage(@DestinationVariable String gameUUID, WebsocketMessage message, Principal principal)
             throws InvalidGameStateException, GameNotFoundException, DictionaryException {
 
-        if (message instanceof WebsocketCanvasMessage) {
-            //log.info("returning canvas message {} to /topic/game-progress/", message);
-            return message;
-        }
-
-        log.info("Called /game-socket/{} message: {}", gameUUID, message);
-
         if (principal == null) {
             throw new InvalidGameStateException("PRINCIPAL NOT FOUND");
         };
 
-        if (message instanceof WebsocketCommandMessage) {
-            return message;
+        if (! (message instanceof WebsocketCanvasMessage)) {
+            log.info("Called /game-socket/{} message: {}", gameUUID, message);
+        }
+
+
+        if (message instanceof WebsocketCanvasMessage) {
+            // do nothing
+        }
+        else if (message instanceof WebsocketCommandMessage) {
+            handleCommandMessage(gameUUID, principal.getName(), ((WebsocketCommandMessage) message).getCommand());
         }
         else if (message instanceof WebsocketChatMessage) {
-
             ((WebsocketChatMessage) message).setSender(principal.getName());
+            message = handleChatMessage(gameUUID, (WebsocketChatMessage) message);
+        }
+        else {
+            log.info("returning unknown message {} to /topic/game-progress/{}", message,gameUUID);
+        }
 
-            Chat chatMessage = new Chat();
-            chatMessage.setMessage(((WebsocketChatMessage) message).getMessage());
-            chatMessage.setLogin(principal.getName());
-            chatMessage.setGameUUID(gameUUID);
-            chatMessage.setTimeSent(LocalDateTime.now());
+        return message;
+    }
 
-            Game game = gameService.gamePlay(chatMessage);
 
-            ((WebsocketChatMessage) message).setMessage(gameService.chatMessageToString(chatMessage));
 
-            if (game.getStatus() == GameStatus.FINISHED) {
-                simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
+    private void handleCommandMessage(String gameUUID, String login, String command) {
 
-                message = new WebsocketChatMessage();
-                ((WebsocketChatMessage) message).setMessage("\"" +
-                        (game.getWord() + "\" is the right word!!!"));
-                ((WebsocketChatMessage) message).setSender(principal.getName());
-                ((WebsocketChatMessage) message).setVictory(true);
-                simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
+        if (command.equals("begin game")) {
+            log.info("begin game");
+            String beginMessage = "Game begins!";
+            WebsocketChatMessage gameStartMessage = new WebsocketChatMessage();
+            gameStartMessage.setMessage(beginMessage);
+            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, gameStartMessage);
 
-                Map<String, Integer> winnersBounty = gameService.increaseWinnersScore(gameUUID, principal.getName());
-                for (var entry : winnersBounty.entrySet()) {
-                    ((WebsocketChatMessage) message).setMessage(entry.getKey() + " gets " + entry.getValue() + " points!");
-                    ((WebsocketChatMessage) message).setSender(principal.getName());
-                    simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
-                }
-                ((WebsocketChatMessage) message).setMessage("GAME FINISHED!");
-                ((WebsocketChatMessage) message).setSender(principal.getName());
+            gameService.getDaoService().saveChatMessage(gameUUID, login, beginMessage);
+
+            Game game = gameService.getDaoService().getGameDAO().getGameByUUID(gameUUID);
+            if (game.getStatus() == GameStatus.NEW) {
+                game.setStatus(GameStatus.IN_PROGRESS);
+                log.info("updating game: {}", game);
+                gameService.getDaoService().getGameDAO().update(game);
             }
-            return  message;
+        }
+        else if (command.equals("cancel game")) {
+
+            log.info("cancel game");
+            String cancelMessage = "The game is cancelled!";
+            WebsocketChatMessage gameCancelMessage = new WebsocketChatMessage();
+            gameCancelMessage.setMessage(cancelMessage);
+            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, gameCancelMessage);
+
+            gameService.getDaoService().saveChatMessage(gameUUID, login, cancelMessage);
+
+            Game game = gameService.getDaoService().getGameDAO().getGameByUUID(gameUUID);
+            game.setStatus(GameStatus.CANCELLED);
+            gameService.getDaoService().getGameDAO().update(game);
 
         }
-        log.info("returning unknown message {} to /topic/game-progress/{}", message,gameUUID);
+        else if (command.equals("leave game")) {
+
+            log.info("leave game");
+            String leaveMessage = login + " left the game!";
+            WebsocketChatMessage playerLeaveMessage = new WebsocketChatMessage();
+            playerLeaveMessage.setMessage(leaveMessage);
+            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, playerLeaveMessage);
+
+            gameService.getDaoService().saveChatMessage(gameUUID, login, leaveMessage);
+
+            GameUser gameUser = gameService.getDaoService().getGameUserDAO().getByGameUuidAndLogin(gameUUID, login);
+            gameService.getDaoService().getGameUserDAO().delete(gameUser);
+
+        }
+    }
+
+    private WebsocketChatMessage handleChatMessage(String gameUUID, WebsocketChatMessage message)
+            throws InvalidGameStateException, GameNotFoundException, DictionaryException {
+
+        Chat chatMessage = gameService.getDaoService().saveChatMessage(
+                gameUUID, message.getSender(), message.getMessage()
+        );
+
+        Game game = gameService.gamePlay(chatMessage);
+
+        message.setMessage(gameService.chatMessageToString(chatMessage));
+
+        if (game.getStatus() == GameStatus.FINISHED) {
+            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
+
+            message.setMessage("\"" + game.getWord() + "\" is the right word!!!");
+            message.setVictory(true);
+
+            simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
+
+            Map<String, Integer> winnersBounty = gameService.increaseWinnersScore(gameUUID, message.getSender());
+            for (var entry : winnersBounty.entrySet()) {
+                String bountyMessage = entry.getKey() + " gets " + entry.getValue() + " points!";
+                message.setMessage(bountyMessage);
+                simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
+                gameService.getDaoService().saveChatMessage(gameUUID, message.getSender(),bountyMessage);
+            }
+            String finishMessage = "GAME FINISHED!";
+            message.setMessage(finishMessage);
+            gameService.getDaoService().saveChatMessage(gameUUID, message.getSender(), finishMessage);
+        }
+
         return message;
     }
 }

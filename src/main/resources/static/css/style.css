@@ -127,6 +127,9 @@ li, a {
     text-align: center;
 }
 .btn-game {
+    width: 20%;
+    height: 7%;
+    background-color: black;
     font-family: "Montserrat", sans-serif;
-    color: black;
+    color: white;
 }

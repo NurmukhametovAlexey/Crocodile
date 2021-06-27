@@ -30,8 +30,7 @@ function processWsMessage(response) {
         console.log(data);
         writeMessage(data.message);
         if(data.victory == true) {
-            hideChat();
-            disableCanvas();
+            endTheGame();
         }
 
 
@@ -42,6 +41,15 @@ function processWsMessage(response) {
         if (data.command === "clear canvas") {
             console.log("clear canvas");
             canvas_context.clearRect(0, 0, canvas.source[0].width, canvas.source[0].height);
+        }
+        else if (data.command === "begin game") {
+            console.log("begin game");
+            beginTheGame();
+        }
+        else if (data.command === "cancel game") {
+            console.log("cancel game");
+            endTheGame();
+            stompClient.disconnect();
         }
     };
 

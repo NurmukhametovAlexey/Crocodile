@@ -38,8 +38,6 @@
 <br/>
 <br/>
 
-<div th:text="${user.toString()}"> </div>
-
 <form th:method="POST" th:action="@{/user}" th:object="${user}">
     <label for="login">Login: </label>
     <input type="text" th:field="*{login}" id="login" disabled/>

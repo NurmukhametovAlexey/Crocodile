@@ -60,3 +60,27 @@ function drawLine(xStart, yStart, xFinish, yFinish) {
 function disableCanvas() {
     canvas.source.unbind("mousedown");
 }
+
+function writeMessage(message){
+    document.getElementById("chat").innerHTML =
+        document.getElementById("chat").innerHTML + message + "<br />";
+}
+
+function hideChat() {
+    document.getElementById("msg").style.display = "none";
+}
+
+function beginTheGame() {
+    initPainting();
+    if(playerRole === "PAINTER") {
+        hideChat();
+    }
+    else if(playerRole === "GUESSER") {
+        disableCanvas();
+    };
+}
+
+function endTheGame() {
+    hideChat();
+    disableCanvas();
+}

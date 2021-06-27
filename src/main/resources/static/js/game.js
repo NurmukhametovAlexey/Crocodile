@@ -4,7 +4,9 @@ let window_width;
 let window_height
 
 $( document ).ready(function() {
+
     connectToSocket();
+
     window_height = window.innerHeight - $("#navbar-element").height();
     window_width = window.innerWidth;
     canvas_width = window_height*0.7;
@@ -13,19 +15,13 @@ $( document ).ready(function() {
     let cnv = document.getElementById("canvas-game");
     cnv.height=canvas_width;
     cnv.width=canvas_height;
-    cnv.style.border="1px solid blue";
+    cnv.style.border="2px solid black";
 
     console.log(chat);
 
-    initPainting();
-
-    if(playerRole === "PAINTER") {
-        hideChat();
+    if (gameStatus != "NEW") {
+        beginTheGame();
     }
-    else if(playerRole === "GUESSER") {
-        disableCanvas();
-    };
-
 
     $("#form-chat").submit(function (event) {
         event.preventDefault();
@@ -51,6 +47,17 @@ $( document ).ready(function() {
 
     });
 
+    $("#btn-start-game").click(function (event) {
+        event.preventDefault();
+
+        stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
+            {
+                "type": "command",
+                "command": "begin game"
+            }));
+
+    });
+
     $("#btn-game-link").click(function (event) {
         event.preventDefault();
 
@@ -64,14 +71,29 @@ $( document ).ready(function() {
         document.execCommand('copy');
         document.body.removeChild(el);
     });
+
+    $("#link-game-cancel").click(function (event) {
+        event.preventDefault();
+
+        stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
+            {
+                "type": "command",
+                "command": "cancel game"
+            }));
+    });
+
+    $("#link-game-leave").click(function (event) {
+        stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
+            {
+                "type": "command",
+                "command": "leave game"
+            }));
+    });
+    stompClient.disconnect();
 });
 
-function writeMessage(message){
-    document.getElementById("chat").innerHTML =
-        document.getElementById("chat").innerHTML + message + "<br />";
-}
 
-function hideChat() {
-    document.getElementById("msg").style.display = "none";
-}
+
+
+
 
