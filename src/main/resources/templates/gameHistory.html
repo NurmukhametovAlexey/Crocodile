@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/style.css">
 
-    <title>Account</title>
+    <title>Game history</title>
 
+    <script>
+        let currentUser = "[[${currentUser}]]";
+    </script>
     <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
@@ -23,46 +26,43 @@
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <li><a class="nav-link" href="/leaderboard">Leaderboard</a></li>
+            <!--<li><a class="nav-link" href="/leaderboard">Leaderboard</a></li>-->
         </div>
         <div class="navbar-nav ml-auto">
-            <li class="nav-item">
+            <li th:if="${user == null}" class="nav-item">
+                <a class="nav-link" href="/login">Log in</a>
+            </li>
+            <li th:if="${user != null}" class="nav-item">
                 <a class="nav-link" href="/logout">Log out</a>
             </li>
-
+            <li th:if="${user == null}" class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
         </div>
     </div>
 </nav>
 
 <br/>
 <br/>
-<br/>
 
-<div class="my_forms">
+<table id="game-history" class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Game UUID</th>
+        <th scope="col">Role</th>
+    </tr>
+    </thead>
 
-    <div th:if="${success == true}">Your data is successfully updated!</div>
-    <br/>
+    <tbody th:each="g, state : ${userGames}" id="rows">
 
-<form th:method="POST" th:action="@{/user}" th:object="${user}">
-    <label for="login">Login: </label>
-    <input type="text" th:field="*{login}" id="login" disabled/>
-    <br/>
-    <label for="password">New password: </label>
-    <input type="text" th:field="*{password}" id="password"/>
-    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
-    <br/>
-    <label for="email">Email: </label>
-    <input type="text" th:field="*{email}" id="email"/>
-    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
-    <br/>
-    <label for="score">Score: </label>
-    <input type="text" th:field="*{score}" id="score" disabled/>
-    <br/>
-    <input type="submit" value="Update!"/>
+        <tr><th scope="row"> [[${state.count}]] </th>
+        <td> <a th:href="'/game/' + ${g.getGameUUID()}" th:text="${g.getGameUUID()}" style="color: black;"/> </td>
+        <td> [[${g.getPlayerRole().toString()}]] </td></tr>
 
-</form>
+    </tbody>
+</table>
 
-</div>
 
 </body>
 </html>

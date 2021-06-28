@@ -14,6 +14,7 @@
         let gameStatus = "[[${game.getStatus()}]]";
         let playerRole = "[[${userRole}]]";
         let chat = "[[${chat}]]";
+        let secretWord = "[[${game.getWord()}]]";
     </script>
 
     <!--    libs for stomp and sockjs-->
@@ -57,7 +58,10 @@
 <br/>
 <br/>
 
+<!--
 <div th:if="${userRole == 'PAINTER'}"> secret word: <b>[[${game.getWord()}]]</b> </div>
+-->
+<div id="game-secret-word"></div>
 
 
 <br/>
@@ -85,13 +89,15 @@
         top: 20%;">
 </canvas>
 
-<button th:if="${userRole == 'PAINTER'}" id="btn-canvas-clear" style="position: fixed;
+<button th:if="${userRole == 'PAINTER'}" id="btn-canvas-clear" style="
+        display: none;
+        position: fixed;
         left: 5%;
         top: 90%;" class="btn-game">
     Clear canvas
 </button>
 
-<button th:if="${userRole == 'PAINTER'}" id="btn-start-game" style="position: fixed;
+<button th:if="${userRole == 'PAINTER' && game.getStatus().toString() == 'NEW'}" id="btn-start-game" style="position: fixed;
         left: 30%;
         top: 90%;" class="btn-game">
     Start the game

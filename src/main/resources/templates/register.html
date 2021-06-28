@@ -39,6 +39,8 @@
 <br/>
 <br/>
 
+<div class="my_forms">
+
 <form th:method="POST" th:action="@{/register-submit}" th:object="${user}">
     <label for="login">Enter login: </label>
     <input type="text" th:field="*{login}" id="login"/>
@@ -56,5 +58,7 @@
     <input type="submit" value="Create!"/>
 
 </form>
+
+</div>
 </body>
 </html>

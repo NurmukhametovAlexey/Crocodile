@@ -5,7 +5,9 @@ let window_height
 
 $( document ).ready(function() {
 
-    connectToSocket();
+    if (gameStatus === "NEW" || gameStatus === "IN_PROGRESS") {
+        connectToSocket();
+    }
 
     window_height = window.innerHeight - $("#navbar-element").height();
     window_width = window.innerWidth;
@@ -19,7 +21,7 @@ $( document ).ready(function() {
 
     console.log(chat);
 
-    if (gameStatus != "NEW") {
+    if (gameStatus === "IN_PROGRESS") {
         beginTheGame();
     }
 
@@ -27,11 +29,13 @@ $( document ).ready(function() {
         event.preventDefault();
 
         let msg = document.getElementById("form-chat").msg.value;
-        stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
-            {
-                "type": "chat",
-                "message": msg
-            }));
+        if (msg) {
+            stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
+                {
+                    "type": "chat",
+                    "message": msg
+                }));
+        }
 
         document.getElementById("form-chat").reset();
     });
@@ -88,8 +92,9 @@ $( document ).ready(function() {
                 "type": "command",
                 "command": "leave game"
             }));
+        stompClient.disconnect();
     });
-    stompClient.disconnect();
+
 });
 
 

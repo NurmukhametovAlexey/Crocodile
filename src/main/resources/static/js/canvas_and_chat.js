@@ -70,10 +70,21 @@ function hideChat() {
     document.getElementById("msg").style.display = "none";
 }
 
+function hideStartButton() {
+    document.getElementById("btn-start-game").style.display = "none";
+}
+
+function showCanvasClearButton() {
+    document.getElementById("btn-canvas-clear").style.display = "block";
+}
+
 function beginTheGame() {
     initPainting();
     if(playerRole === "PAINTER") {
         hideChat();
+        hideStartButton();
+        showCanvasClearButton();
+        document.getElementById("game-secret-word").innerHTML += "<b>" + secretWord + "</b><br />";
     }
     else if(playerRole === "GUESSER") {
         disableCanvas();

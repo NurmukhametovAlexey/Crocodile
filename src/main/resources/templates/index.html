@@ -30,6 +30,9 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
             <li><a class="nav-link" href="/leaderboard">Leaderboard</a></li>
+            <li th:if="${user != null}" class="nav-item">
+                <a class="nav-link" href="/user/history">Match history</a>
+            </li>
         </div>
         <div class="navbar-nav ml-auto">
             <li th:if="${user == null}" class="nav-item">
@@ -57,7 +60,7 @@
     <div th:if="${user!=null}" th:text="'Hello, ' +  ${user} + '!'"/>
     <div th:if="${user==null}"> Hello, stranger! Please, log in to play the game.</div>
     <br/>
-    <button id="btn-game-start" type="button" class="btn-index">New Game</button>
+    <button id="btn-game-create" type="button" class="btn-index">New Game</button>
     <br/>
     <br/>
     <button id="btn-game-connect" type="button" class="btn-index">Connect to game</button>

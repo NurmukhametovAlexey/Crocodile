@@ -133,3 +133,10 @@ li, a {
     font-family: "Montserrat", sans-serif;
     color: white;
 }
+
+.my_forms {
+    font-family: "Montserrat", sans-serif;
+    font-size: xx-large;
+    color: black;
+    margin: auto;
+}
