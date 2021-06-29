@@ -44,6 +44,10 @@ public class GameController {
             attributes.addFlashAttribute("errorMessage", e.getMessage());
             return new ModelAndView("redirect:/error");
         }
+        catch (NullPointerException e) {
+            attributes.addFlashAttribute("errorMessage", "You are not a player of this match!");
+            return new ModelAndView("redirect:/error");
+        }
     }
 
     @PostMapping("/start")

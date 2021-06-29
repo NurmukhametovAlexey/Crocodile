@@ -11,13 +11,14 @@ $( document ).ready(function() {
 
     window_height = window.innerHeight - $("#navbar-element").height();
     window_width = window.innerWidth;
-    canvas_width = window_height*0.7;
-    canvas_height = window_width*0.45;
+    canvas_width = window_width*0.55;
+    canvas_height = window_height*0.7;
 
     let cnv = document.getElementById("canvas-game");
-    cnv.height=canvas_width;
-    cnv.width=canvas_height;
+    cnv.height=canvas_height;
+    cnv.width=canvas_width;
     cnv.style.border="2px solid black";
+
 
     console.log(chat);
 

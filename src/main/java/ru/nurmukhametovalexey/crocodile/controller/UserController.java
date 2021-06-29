@@ -50,10 +50,17 @@ public class UserController {
     }
 
     @PostMapping()
-    public ModelAndView accountUpdate(Principal principal, @ModelAttribute User user, RedirectAttributes attributes) {
-        log.info("account update: {}", user);
+    public ModelAndView accountUpdate(Principal principal, @ModelAttribute @Valid User user,
+                                      BindingResult bindingResult, RedirectAttributes attributes) {
+        log.info("account update: {}, binding result: {}", user, bindingResult.toString());
 
         User initialUser = daoService.getUserDAO().getUserByLogin(principal.getName());
+
+        if (bindingResult.hasFieldErrors("email") || bindingResult.hasFieldErrors("password") &&
+                user.getPassword() != null && !user.getPassword().isBlank()) {
+            ModelAndView modelAndView = new ModelAndView("/user");
+            return modelAndView;
+        }
 
         if (user.getPassword() != null && !user.getPassword().isBlank()) {
             initialUser.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -64,9 +71,8 @@ public class UserController {
         }
 
         daoService.getUserDAO().update(initialUser);
-        ModelAndView modelAndView = new ModelAndView("redirect:/user");
         attributes.addFlashAttribute("success", true);
-        return modelAndView;
+        return new ModelAndView("redirect:/user");
     }
 
     @GetMapping("/history")

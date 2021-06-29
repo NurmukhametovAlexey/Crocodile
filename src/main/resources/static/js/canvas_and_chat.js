@@ -82,6 +82,13 @@ function hideStartButton() {
     }
 }
 
+function hideClearCanvasButton() {
+    let clearCanvasButton = document.getElementById("btn-canvas-clear");
+    if (clearCanvasButton) {
+        clearCanvasButton.style.display = "none";
+    }
+}
+
 function showCanvasClearButton() {
     let canvasClearButton = document.getElementById("btn-canvas-clear");
     if (canvasClearButton) {
@@ -105,4 +112,5 @@ function beginTheGame() {
 function endTheGame() {
     hideChat();
     disableCanvas();
+    hideClearCanvasButton();
 }

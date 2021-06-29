@@ -64,10 +64,15 @@
 <!--
 <div th:if="${userRole == 'PAINTER'}"> secret word: <b>[[${game.getWord()}]]</b> </div>
 -->
-<div id="game-secret-word"></div>
-
+<div id="game-secret-word"
+    style="position: fixed;
+    font-size: xxx-large;
+    top: 10%;
+    left: 27%;">
+</div>
 
 <br/>
+
 <div id="chat" class="game-chat">
     <th:block th:each="msg : ${chat}">
         [[${msg}]] <br/>
@@ -75,7 +80,6 @@
 </div>
 
 <form id="form-chat" class="game-chat-form">
-
     <input type="text" id="msg" placeholder="Enter your message"/>
 </form>
 

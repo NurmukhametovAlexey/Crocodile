@@ -107,24 +107,26 @@ li, a {
 
 .game-chat {
     font-family: "Montserrat", sans-serif;
-    font-size: medium;
+    font-size: x-large;
     color: black;
     width: 30%;
     height: 60%;
     position: fixed;
-    left: 60%;
+    left: 65%;
     top: 20%;
-    border: thin black;
+    margin: auto;
+    border: 2px solid black;
     overflow-y: scroll;
 }
 
-.game-chat-form {
-    font-size: medium;
-    width: 40%;
+.game-chat-form{
+    font-family: "Montserrat", sans-serif;
+    font-size: x-large;
+    width: 80%;
     height: 15%;
     position: fixed;
-    left: 60%;
-    top: 80%;
+    left: 40%;
+    top: 82%;
     text-align: center;
 }
 .btn-game {
