@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
+import ru.nurmukhametovalexey.crocodile.model.GameHistory;
 import ru.nurmukhametovalexey.crocodile.model.GameUser;
 import ru.nurmukhametovalexey.crocodile.model.User;
 import ru.nurmukhametovalexey.crocodile.service.DaoService;
@@ -79,11 +79,11 @@ public class UserController {
     public ModelAndView gameHistory(Principal principal) {
         log.info("game history: {}", principal.getName());
 
-        List<GameUser> userGames = daoService.getGameUserDAO().getGameUserByLogin(principal.getName());
+        List<GameHistory> gameHistoryList = daoService.getGameHistoryByLogin(principal.getName());
 
         ModelAndView modelAndView = new ModelAndView("/gameHistory");
         modelAndView.addObject("user", principal.getName());
-        modelAndView.addObject("userGames", userGames);
+        modelAndView.addObject("userGames", gameHistoryList);
         return modelAndView;
     }
 }

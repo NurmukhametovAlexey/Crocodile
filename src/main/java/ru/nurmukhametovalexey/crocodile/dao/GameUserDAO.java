@@ -6,11 +6,11 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import ru.nurmukhametovalexey.crocodile.model.GameHistory;
 import ru.nurmukhametovalexey.crocodile.model.GameUser;
 import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component

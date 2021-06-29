@@ -1,0 +1,26 @@
+eye
+money
+arrow
+question
+clock
+see
+man
+woman
+earth
+star
+bow
+banana
+mouth
+computer
+phone
+light bulb
+window
+door
+fan
+gun
+headphones
+spoon
+fork
+scissors
+fish
+covid

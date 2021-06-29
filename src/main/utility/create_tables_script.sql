@@ -48,3 +48,4 @@ CREATE TABLE Canvas (
 CREATE CAST (character varying AS gamestatus) WITH INOUT AS ASSIGNMENT;
 CREATE CAST (character varying AS playerstatus) WITH INOUT AS ASSIGNMENT;
 
+select enum_range(enum_first(null::playerstatus),null::playerstatus);

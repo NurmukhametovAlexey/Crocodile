@@ -49,16 +49,24 @@
     <thead class="thead-dark">
     <tr>
         <th scope="col">#</th>
+        <th scope="col">Started</th>
+        <th scope="col">Finished</th>
         <th scope="col">Game UUID</th>
         <th scope="col">Role</th>
+        <th scope="col">Result</th>
     </tr>
     </thead>
 
     <tbody th:each="g, state : ${userGames}" id="rows">
 
-        <tr><th scope="row"> [[${state.count}]] </th>
-        <td> <a th:href="'/game/' + ${g.getGameUUID()}" th:text="${g.getGameUUID()}" style="color: black;"/> </td>
-        <td> [[${g.getPlayerRole().toString()}]] </td></tr>
+        <tr>
+            <th scope="row"> [[${state.count}]] </th>
+            <td> [[${g.getTimeStarted()}]] </td>
+            <td> [[${g.getTimeFinished}]] </td>
+            <td> <a th:href="'/game/' + ${g.getGameUUID()}" th:text="${g.getGameUUID()}" style="color: black;"/> </td>
+            <td> [[${g.getPlayerRole().toString()}]] </td>
+            <td> <span th:if="${g.getWin()}">WIN</span><span th:if="${!g.getWin()}">LOSE</span>  </td>
+        </tr>
 
     </tbody>
 </table>

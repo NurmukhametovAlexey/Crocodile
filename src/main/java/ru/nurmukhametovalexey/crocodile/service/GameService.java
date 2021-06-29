@@ -151,7 +151,7 @@ public class GameService {
 
     public String chatMessageToString(Chat message) {
         //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         return message.getTimeSent().format(formatter) + "| " + message.getLogin()
                 + ": " + message.getMessage() + "";
     }

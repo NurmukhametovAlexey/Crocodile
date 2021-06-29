@@ -32,6 +32,16 @@ public class GameDAO {
     }
 
     @Nullable
+    public List<Game> getGamesByUUIDs(List<String> gameUUIDs) {
+        String uuidString = String.join(",", gameUUIDs);
+        return jdbcTemplate.query(
+                "SELECT * FROM Game WHERE gameUUID IN (?)",
+                new BeanPropertyRowMapper<>(Game.class),
+                uuidString
+        );
+    }
+
+    @Nullable
     public List<Game> getGamesByStatus(GameStatus status) {
         return jdbcTemplate.query(
                 "SELECT * FROM Game WHERE status=?",

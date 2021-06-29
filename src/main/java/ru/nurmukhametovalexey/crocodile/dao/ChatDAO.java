@@ -28,6 +28,16 @@ public class ChatDAO {
         );
     }
 
+    @Nullable
+    public Chat getLastMessageByGameUUID(String gameUUID) {
+        return jdbcTemplate.query(
+                "SELECT * FROM chat WHERE gameUUID=? ORDER BY timeSent DESC LIMIT 1",
+                new BeanPropertyRowMapper<>(Chat.class),
+                gameUUID).stream()
+                .findAny()
+                .orElse(null);
+    }
+
     public boolean save(Chat chatMessage) {
         int rowsAffected = jdbcTemplate.update(
                 "INSERT INTO Chat (message, login, gameUUID, timeSent)" +

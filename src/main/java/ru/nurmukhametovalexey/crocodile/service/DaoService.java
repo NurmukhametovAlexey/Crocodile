@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import ru.nurmukhametovalexey.crocodile.model.GameHistory;
 import ru.nurmukhametovalexey.crocodile.dao.*;
 import ru.nurmukhametovalexey.crocodile.exception.DictionaryException;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class DaoService {
+    private final JdbcTemplate jdbcTemplate;
     private final UserDAO userDAO;
     private final GameDAO gameDAO;
     private final GameUserDAO gameUserDAO;
@@ -88,4 +91,19 @@ public class DaoService {
         return chatMessage;
     }
 
+    @Nullable
+    public List<GameHistory> getGameHistoryByLogin(String login) {
+        List<GameHistory> gameHistoryList = jdbcTemplate.query(
+                "SELECT * FROM GameUser NATURAL JOIN Game WHERE login=? ORDER BY timeStarted DESC",
+                new GameHistoryMapper(), login
+        );
+        for (GameHistory gh: gameHistoryList) {
+            Boolean win = gh.getPlayerRole().equals(PlayerRole.PAINTER)
+                    ||chatDAO.getLastMessageByGameUUID(gh.getGameUUID()).getLogin().equals(login);
+            gh.setWin(win);
+            log.info("game history: {}", gh);
+        }
+
+        return gameHistoryList;
+    }
 }
