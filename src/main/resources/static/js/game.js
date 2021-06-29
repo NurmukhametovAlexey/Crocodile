@@ -14,10 +14,10 @@ $( document ).ready(function() {
     canvas_width = window_width*0.55;
     canvas_height = window_height*0.7;
 
-    let cnv = document.getElementById("canvas-game");
+    /*let cnv = document.getElementById("canvas-game");
     cnv.height=canvas_height;
     cnv.width=canvas_width;
-    cnv.style.border="2px solid black";
+    cnv.style.border="2px solid black";*/
 
 
     console.log(chat);
@@ -29,7 +29,7 @@ $( document ).ready(function() {
     $("#form-chat").submit(function (event) {
         event.preventDefault();
 
-        let msg = document.getElementById("form-chat").msg.value;
+        let msg = document.getElementById("form-chat-input").value;
         if (msg) {
             stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify(
                 {

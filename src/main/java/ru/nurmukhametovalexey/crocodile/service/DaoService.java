@@ -94,7 +94,7 @@ public class DaoService {
     @Nullable
     public List<GameHistory> getGameHistoryByLogin(String login) {
         List<GameHistory> gameHistoryList = jdbcTemplate.query(
-                "SELECT * FROM GameUser NATURAL JOIN Game WHERE login=? ORDER BY timeStarted DESC",
+                "SELECT * FROM GameUser NATURAL JOIN Game WHERE login=? AND timefinished IS NOT NULL ORDER BY timeStarted DESC",
                 new GameHistoryMapper(), login
         );
         for (GameHistory gh: gameHistoryList) {

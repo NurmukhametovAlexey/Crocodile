@@ -25,6 +25,17 @@
     <script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            border: 0;
+            overflow: hidden; /*  Disable scrollbars */
+            display: block;  /* No floating content on sides */
+        }
+    </style>
+
 </head>
 <body>
 
@@ -45,7 +56,7 @@
         </div>
         <div class="navbar-nav ml-auto">
             <li th:if="${userRole} == 'PAINTER'" class="nav-item">
-                <a class="nav-link" id="link-game-cancel" href="/">Cancel the game</a>
+                <a class="nav-link" id="link-game-cancel" href="/">Cancel game</a>
             </li>
             <li th:if="${userRole} != 'PAINTER'" class="nav-item">
                 <a class="nav-link" id="link-game-leave" href="/">Leave</a>
@@ -61,26 +72,24 @@
 <br/>
 <br/>
 
-<!--
-<div th:if="${userRole == 'PAINTER'}"> secret word: <b>[[${game.getWord()}]]</b> </div>
--->
+
 <div id="game-secret-word"
     style="position: fixed;
     font-size: xxx-large;
     top: 10%;
-    left: 27%;">
+    left: 26%;">
 </div>
 
 <br/>
 
-<div id="chat" class="game-chat">
+<div id="chat-box" class="game-chat">
     <th:block th:each="msg : ${chat}">
         [[${msg}]] <br/>
     </th:block>
 </div>
 
 <form id="form-chat" class="game-chat-form">
-    <input type="text" id="msg" placeholder="Enter your message"/>
+    <input type="text" id="form-chat-input"  placeholder="Enter your message"/>
 </form>
 
 <button id="btn-game-link" style="position: fixed;
@@ -95,6 +104,45 @@
         left: 5%;
         top: 20%;">
 </canvas>
+
+<script>
+    (function() {
+        var
+            // Obtain a reference to the canvas element using its id.
+            htmlCanvas = document.getElementById('canvas-game'),
+            // Obtain a graphics context on the canvas element for drawing.
+            context = htmlCanvas.getContext('2d');
+
+        // Start listening to resize events and draw canvas.
+        initialize();
+
+        function initialize() {
+            // Register an event listener to call the resizeCanvas() function
+            // each time the window is resized.
+            window.addEventListener('resize', resizeCanvas, false);
+            // Draw canvas border for the first time.
+            resizeCanvas();
+        }
+
+        // Display custom canvas. In this case it's a blue, 5 pixel
+        // border that resizes along with the browser window.
+        function redraw() {
+            context.strokeStyle = 'black';
+            context.lineWidth = '2';
+            context.strokeRect(0, 0, window.innerWidth * 0.55, window.innerHeight * 0.7);
+        }
+
+        // Runs each time the DOM window resize event fires.
+        // Resets the canvas dimensions to match window,
+        // then draws the new borders accordingly.
+        function resizeCanvas() {
+            htmlCanvas.width = window.innerWidth * 0.55;
+            htmlCanvas.height = window.innerHeight * 0.7;
+            redraw();
+        }
+    })();
+
+</script>
 
 <button th:if="${userRole == 'PAINTER'}" id="btn-canvas-clear" style="
         display: none;

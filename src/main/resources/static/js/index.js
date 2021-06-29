@@ -1,8 +1,5 @@
 $( document ).ready(function() {
 
-    console.log("user: " + currentUser);
-    console.log("activeGameUUID" + activeGameUUID);
-
     $("#btn-game-create").click(function () {
         if(!currentUser) {
             alert("Please, login!");
@@ -10,12 +7,12 @@ $( document ).ready(function() {
         else if (activeGameUUID) {
             alert("Please, finish your last match!");
         } else {
-            openForm("form-game-start");
+            openForm("form-game-create");
         }
     });
 
-    $("#form-game-start-close").click(function () {
-        closeForm("form-game-start");
+    $("#form-game-create-close").click(function () {
+        closeForm("form-game-create");
     });
 
     $("#btn-game-connect").click(function () {

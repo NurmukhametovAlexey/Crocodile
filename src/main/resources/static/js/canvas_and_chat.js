@@ -57,6 +57,13 @@ function drawLine(xStart, yStart, xFinish, yFinish) {
     canvas_context.stroke();
 };
 
+function clearCanvas() {
+    canvas_context.clearRect(0, 0, canvas.source[0].width, canvas.source[0].height);
+    canvas_context.strokeStyle = 'black';
+    canvas_context.lineWidth = '2';
+    canvas_context.strokeRect(0, 0, window.innerWidth * 0.55, window.innerHeight * 0.7);
+}
+
 function disableCanvas() {
     if (canvas.source) {
         canvas.source.unbind("mousedown");
@@ -64,28 +71,14 @@ function disableCanvas() {
 }
 
 function writeMessage(message){
-    document.getElementById("chat").innerHTML =
-        document.getElementById("chat").innerHTML + message + "<br />";
+    document.getElementById("chat-box").innerHTML =
+        document.getElementById("chat-box").innerHTML + message + "<br />";
 }
 
-function hideChat() {
-    let chat = document.getElementById("msg");
-    if (chat) {
-        chat.style.display = "none";
-    }
-}
-
-function hideStartButton() {
-    let startButton = document.getElementById("btn-start-game");
-    if (startButton) {
-        startButton.style.display = "none";
-    }
-}
-
-function hideClearCanvasButton() {
-    let clearCanvasButton = document.getElementById("btn-canvas-clear");
-    if (clearCanvasButton) {
-        clearCanvasButton.style.display = "none";
+function hideElement(id) {
+    let el = document.getElementById(id);
+    if (el) {
+        el.style.display = "none";
     }
 }
 
@@ -99,8 +92,8 @@ function showCanvasClearButton() {
 function beginTheGame() {
     initPainting();
     if(playerRole === "PAINTER") {
-        hideChat();
-        hideStartButton();
+        hideElement("form-chat-input");
+        hideElement("btn-start-game");
         showCanvasClearButton();
         document.getElementById("game-secret-word").innerHTML += "<b>" + secretWord + "</b><br />";
     }
@@ -110,7 +103,7 @@ function beginTheGame() {
 }
 
 function endTheGame() {
-    hideChat();
+    hideElement("form-chat-input");
+    hideElement("btn-canvas-clear");
     disableCanvas();
-    hideClearCanvasButton();
 }

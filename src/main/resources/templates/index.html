@@ -72,7 +72,7 @@
 
 </div>
 
-<div class="form-popup" id="form-game-start">
+<div class="form-popup" id="form-game-create">
     <form th:method="POST" th:action="@{/game/start}" th:object="${startRequest}" class="form-container">
 
         <h3>
@@ -87,7 +87,7 @@
         <!--<input id="difficulty" type="text" th:field="*{difficulty}" placeholder="difficulty" required>-->
 
         <button type="submit" class="btn">Play</button>
-        <button id="form-game-start-close" type="button" class="btn cancel">Close</button>
+        <button id="form-game-create-close" type="button" class="btn cancel">Close</button>
     </form>
 </div>
 

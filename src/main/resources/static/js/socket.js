@@ -10,6 +10,7 @@ function connectToSocket() {
             stompClient.subscribe("/topic/game-progress/" + gameUUID, function (response) {
 
                 processWsMessage(response);
+
             });
         }
     );
@@ -40,7 +41,7 @@ function processWsMessage(response) {
 
         if (data.command === "clear canvas") {
             console.log("clear canvas");
-            canvas_context.clearRect(0, 0, canvas.source[0].width, canvas.source[0].height);
+            clearCanvas();
         }
         else if (data.command === "begin game") {
             console.log("begin game");
