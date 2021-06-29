@@ -29,7 +29,7 @@ public class UserDAO {
     }
 
     @Nullable
-    public List<User> getAllScoreDesc() {
+    public List<User> getAllScoresDesc() {
         return  jdbcTemplate.query(
                 "SELECT * FROM \"User\" ORDER BY score DESC",
                 new BeanPropertyRowMapper<>(User.class)

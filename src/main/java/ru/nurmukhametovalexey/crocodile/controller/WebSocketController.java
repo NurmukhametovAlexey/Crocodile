@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketCanvasMessage;
 import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketChatMessage;
 import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketCommandMessage;
@@ -19,7 +20,6 @@ import ru.nurmukhametovalexey.crocodile.model.*;
 import ru.nurmukhametovalexey.crocodile.service.GameService;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -33,17 +33,12 @@ public class WebSocketController {
     @MessageMapping("/game-socket/{gameUUID}")
     @SendTo("/topic/game-progress/{gameUUID}")
     @ResponseBody
-    public WebsocketMessage handleWsMessage(@DestinationVariable String gameUUID, WebsocketMessage message, Principal principal)
-            throws InvalidGameStateException, GameNotFoundException, DictionaryException {
-
-        if (principal == null) {
-            throw new InvalidGameStateException("PRINCIPAL NOT FOUND");
-        };
+    public WebsocketMessage handleWsMessage(@DestinationVariable String gameUUID, WebsocketMessage message,
+                                            Principal principal){
 
         if (! (message instanceof WebsocketCanvasMessage)) {
             log.info("Called /game-socket/{} message: {}", gameUUID, message);
         }
-
 
         if (message instanceof WebsocketCanvasMessage) {
             // do nothing
@@ -53,7 +48,11 @@ public class WebSocketController {
         }
         else if (message instanceof WebsocketChatMessage) {
             ((WebsocketChatMessage) message).setSender(principal.getName());
-            message = handleChatMessage(gameUUID, (WebsocketChatMessage) message);
+            try {
+                message = handleChatMessage(gameUUID, (WebsocketChatMessage) message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         else {
             log.info("returning unknown message {} to /topic/game-progress/{}", message,gameUUID);

@@ -40,6 +40,15 @@ public class GameDAO {
         );
     }
 
+    @Nullable
+    public List<Game> getActiveGames() {
+        return jdbcTemplate.query(
+                "SELECT * FROM Game WHERE status=?::gamestatus OR status=?::gamestatus",
+                new BeanPropertyRowMapper<>(Game.class),
+                GameStatus.NEW.toString(), GameStatus.IN_PROGRESS.toString()
+        );
+    }
+
     public boolean save(Game game) {
         int rowsAffected = jdbcTemplate.update(
                 "INSERT INTO Game(gameUUID, word, timeStarted, timeFinished, status)" +

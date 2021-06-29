@@ -58,7 +58,9 @@ function drawLine(xStart, yStart, xFinish, yFinish) {
 };
 
 function disableCanvas() {
-    canvas.source.unbind("mousedown");
+    if (canvas.source) {
+        canvas.source.unbind("mousedown");
+    }
 }
 
 function writeMessage(message){
@@ -67,15 +69,24 @@ function writeMessage(message){
 }
 
 function hideChat() {
-    document.getElementById("msg").style.display = "none";
+    let chat = document.getElementById("msg");
+    if (chat) {
+        chat.style.display = "none";
+    }
 }
 
 function hideStartButton() {
-    document.getElementById("btn-start-game").style.display = "none";
+    let startButton = document.getElementById("btn-start-game");
+    if (startButton) {
+        startButton.style.display = "none";
+    }
 }
 
 function showCanvasClearButton() {
-    document.getElementById("btn-canvas-clear").style.display = "block";
+    let canvasClearButton = document.getElementById("btn-canvas-clear");
+    if (canvasClearButton) {
+        canvasClearButton.style.display = "block";
+    }
 }
 
 function beginTheGame() {

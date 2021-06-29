@@ -32,21 +32,15 @@ public class UserController {
     }
 
     @GetMapping()
-    public ModelAndView account(Principal principal, @ModelAttribute("success") Object success) {
-        User user;
+    public ModelAndView account(@ModelAttribute("success") Object success,
+                                Principal principal, RedirectAttributes attributes) {
+        log.info("account: {}", principal.getName());
 
-        if (principal == null) {
-            ModelAndView modelAndView = new ModelAndView("/login");
-            return modelAndView;
-        } else {
-            user = daoService.getUserDAO().getUserByLogin(principal.getName());
-        }
-
+        User user = daoService.getUserDAO().getUserByLogin(principal.getName());;
         if (user == null) {
-            ModelAndView modelAndView = new ModelAndView("/error");
-            return modelAndView;
+            attributes.addFlashAttribute("errorMessage", "Can`t find user with login: " + principal.getName());
+            return new ModelAndView("redirect:/error");
         }
-
         user.setPassword(null);
 
         ModelAndView modelAndView = new ModelAndView("/user");
@@ -57,12 +51,7 @@ public class UserController {
 
     @PostMapping()
     public ModelAndView accountUpdate(Principal principal, @ModelAttribute User user, RedirectAttributes attributes) {
-        log.info("accountUpdate. {}", user);
-
-        if (principal == null) {
-            ModelAndView modelAndView = new ModelAndView("/login");
-            return modelAndView;
-        }
+        log.info("account update: {}", user);
 
         User initialUser = daoService.getUserDAO().getUserByLogin(principal.getName());
 
@@ -82,11 +71,7 @@ public class UserController {
 
     @GetMapping("/history")
     public ModelAndView gameHistory(Principal principal) {
-
-        if (principal == null) {
-            ModelAndView modelAndView = new ModelAndView("/login");
-            return modelAndView;
-        }
+        log.info("game history: {}", principal.getName());
 
         List<GameUser> userGames = daoService.getGameUserDAO().getGameUserByLogin(principal.getName());
 

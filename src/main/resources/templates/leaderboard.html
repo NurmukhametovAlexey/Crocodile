@@ -27,6 +27,9 @@
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
       <!--<li><a class="nav-link" href="/leaderboard">Leaderboard</a></li>-->
+      <li th:if="${user != null}" class="nav-item">
+        <a class="nav-link" href="/user/history">Match history</a>
+      </li>
     </div>
     <div class="navbar-nav ml-auto">
       <li th:if="${user == null}" class="nav-item">

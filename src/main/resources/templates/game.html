@@ -11,7 +11,7 @@
     <script>
         let currentUser = "[[${user}]]";
         let gameUUID = "[[${game.getGameUUID()}]]";
-        let gameStatus = "[[${game.getStatus()}]]";
+        let gameStatus = "[[${game.getStatus().toString()}]]";
         let playerRole = "[[${userRole}]]";
         let chat = "[[${chat}]]";
         let secretWord = "[[${game.getWord()}]]";
@@ -39,6 +39,9 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
             <li><a class="nav-link" href="/leaderboard">Leaderboard</a></li>
+            <li th:if="${user != null}" class="nav-item">
+                <a class="nav-link" href="/user/history">Match history</a>
+            </li>
         </div>
         <div class="navbar-nav ml-auto">
             <li th:if="${userRole} == 'PAINTER'" class="nav-item">
