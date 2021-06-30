@@ -27,10 +27,10 @@ function initCanvas() {
 
                 stompClient.send("/app/game-socket/" + gameUUID, {}, JSON.stringify({
                     "type": "canvas",
-                    "x_start": canvas.lastPoint.x / window_width,
-                    "y_start": canvas.lastPoint.y / window_height,
-                    "x_finish": e.offsetX / window_width,
-                    "y_finish": e.offsetY / window_height
+                    "x_start": canvas.lastPoint.x / W,
+                    "y_start": canvas.lastPoint.y / H,
+                    "x_finish": e.offsetX / W,
+                    "y_finish": e.offsetY / H
                 }));
 
                 canvas.lastPoint = {x: e.offsetX, y: e.offsetY};
@@ -50,8 +50,8 @@ function initCanvas() {
 function drawLine(xStart, yStart, xFinish, yFinish) {
     canvas_context.beginPath();
 
-    canvas_context.moveTo(xStart * window_width, yStart * window_height);
-    canvas_context.lineTo(xFinish * window_width, yFinish * window_height);
+    canvas_context.moveTo(xStart * W, yStart * H);
+    canvas_context.lineTo(xFinish * W, yFinish * H);
 
     canvas_context.closePath();
     canvas_context.stroke();
@@ -105,5 +105,7 @@ function beginTheGame() {
 function endTheGame() {
     hideElement("form-chat-input");
     hideElement("btn-canvas-clear");
+    hideElement("link-game-cancel");
+    hideElement("link-game-leave");
     disableCanvas();
 }

@@ -27,17 +27,8 @@
             <li><a class="nav-link" href="/leaderboard">Leaderboard</a></li>
         </div>
         <div class="navbar-nav ml-auto">
-            <li th:if="${user == null}" class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="/login">Log in</a>
-            </li>
-            <li th:if="${user == null}" class="nav-item">
-                <a class="nav-link" href="/register">Register</a>
-            </li>
-            <li th:if="${user != null}" class="nav-item">
-                <a class="nav-link" href="/user">My profile</a>
-            </li>
-            <li th:if="${user != null}" class="nav-item">
-                <a class="nav-link" href="/logout">Log out</a>
             </li>
         </div>
     </div>

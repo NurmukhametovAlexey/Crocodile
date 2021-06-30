@@ -106,39 +106,46 @@
 </canvas>
 
 <script>
+    let cnv;
+    let ctx;
+    let W;
+    let H;
     (function() {
-        var
-            // Obtain a reference to the canvas element using its id.
-            htmlCanvas = document.getElementById('canvas-game'),
-            // Obtain a graphics context on the canvas element for drawing.
-            context = htmlCanvas.getContext('2d');
 
-        // Start listening to resize events and draw canvas.
         initialize();
 
         function initialize() {
-            // Register an event listener to call the resizeCanvas() function
-            // each time the window is resized.
+            cnv = document.getElementById("canvas-game");
+            cnv.style.border="2px solid black";
+            ctx = cnv.getContext('2d');
+            W = cnv.width;
+            H = cnv.height;
+
             window.addEventListener('resize', resizeCanvas, false);
-            // Draw canvas border for the first time.
+
             resizeCanvas();
         }
 
-        // Display custom canvas. In this case it's a blue, 5 pixel
-        // border that resizes along with the browser window.
-        function redraw() {
-            context.strokeStyle = 'black';
-            context.lineWidth = '2';
-            context.strokeRect(0, 0, window.innerWidth * 0.55, window.innerHeight * 0.7);
-        }
-
-        // Runs each time the DOM window resize event fires.
-        // Resets the canvas dimensions to match window,
-        // then draws the new borders accordingly.
         function resizeCanvas() {
-            htmlCanvas.width = window.innerWidth * 0.55;
-            htmlCanvas.height = window.innerHeight * 0.7;
-            redraw();
+            let img = ctx.getImageData(0,0,W,H);
+            ctx.canvas.width = window.innerWidth*0.55;
+            ctx.canvas.height = window.innerHeight*0.7;
+
+            W = cnv.width;
+            H = cnv.height;
+
+            /*createImageBitmap(img, {
+                resizeWidth: W,
+                resizeHeight: H,
+                premultiplyAlpha: "none",
+                colorSpaceConversion: "none",
+                resizeQuality: "high"
+            }).then(function(bitmap) {
+                ctx.drawImage(bitmap, 0, 0);
+            });*/
+            createImageBitmap(img).then(function(bitmap) {
+                ctx.drawImage(bitmap, 0, 0, W, H);
+            });
         }
     })();
 

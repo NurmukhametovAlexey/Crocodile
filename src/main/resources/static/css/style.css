@@ -44,8 +44,8 @@ li, a {
 .form-popup {
     display: none;
     position: fixed;
-    top: 30%;
-    left: 41%;
+    top: 33%;
+    left: 40%;
     border: 3px solid #f1f1f1;
     z-index: 9;
 }
