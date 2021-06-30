@@ -103,11 +103,4 @@ public class HomeController {
         }
         return modelAndView;
     }
-
-    @GetMapping("/error")
-    public ModelAndView errorPage(@ModelAttribute("errorMessage") Object errorMessage) {
-        ModelAndView modelAndView = new ModelAndView("/error");
-        modelAndView.addObject("errorMessage", errorMessage);
-        return modelAndView;
-    }
 }
