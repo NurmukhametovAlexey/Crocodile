@@ -6,20 +6,17 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import ru.nurmukhametovalexey.crocodile.model.Dictionary;
-import ru.nurmukhametovalexey.crocodile.model.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @DataJdbcTest
 @Sql({"classpath:dictionary_schema.sql", "classpath:dictionary_test_data.sql"})
 class DictionaryDAOTest {
 
-    private JdbcTemplate jdbcTemplate;
-    private DictionaryDAO dictionaryDAO;
+    private final JdbcTemplate jdbcTemplate;
+    private final DictionaryDAO dictionaryDAO;
 
     @Autowired
     public DictionaryDAOTest(JdbcTemplate jdbcTemplate) {
@@ -29,11 +26,9 @@ class DictionaryDAOTest {
 
     @Test
     void getAll() {
-
         Dictionary[] expected = new Dictionary[] {
                 new Dictionary("easy", 1), new Dictionary("medium", 2), new Dictionary("hard", 3)
         };
-
         List<Dictionary> result = dictionaryDAO.getAll();
         assertThat(result.toArray()).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
     }

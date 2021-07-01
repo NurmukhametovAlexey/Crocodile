@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Chat {
     String message;
-    String gameUUID;
     String login;
+    String gameUUID;
     LocalDateTime timeSent;
 }

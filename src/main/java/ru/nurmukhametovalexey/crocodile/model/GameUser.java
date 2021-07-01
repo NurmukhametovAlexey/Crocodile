@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class GameUser {
-    private String gameUUID;
     private String login;
+    private String gameUUID;
     private PlayerRole playerRole;
 }

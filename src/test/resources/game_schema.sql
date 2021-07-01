@@ -1,4 +1,4 @@
-drop table if exists Game;
+drop table if exists Game cascade;
 drop type if exists gameStatus;
 
 CREATE TYPE gameStatus AS ENUM ('NEW', 'IN_PROGRESS', 'FINISHED','CANCELLED');

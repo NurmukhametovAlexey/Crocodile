@@ -1,4 +1,4 @@
-drop table if exists "User";
+drop table if exists "User" cascade;
 CREATE TABLE "User" (
                         login varchar PRIMARY KEY,
                         password varchar NOT NULL,

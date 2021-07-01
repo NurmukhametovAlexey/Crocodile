@@ -6,11 +6,13 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
+import ru.nurmukhametovalexey.crocodile.model.GameUser;
 import ru.nurmukhametovalexey.crocodile.model.User;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -19,8 +21,8 @@ import java.util.List;
 class UserDAOTest {
 
 
-    private JdbcTemplate jdbcTemplate;
-    private UserDAO userDAO;
+    private final JdbcTemplate jdbcTemplate;
+    private final UserDAO userDAO;
 
     @Autowired
     public UserDAOTest(JdbcTemplate jdbcTemplate) {
@@ -30,10 +32,12 @@ class UserDAOTest {
 
     @Test
     void getAll() {
+        List<User> expected = Arrays.asList(
+                new User("admin","admin","admin@mail.com","Admin",16,true),
+                new User("qwe","qwe","qwe@mail.ru","User",15,true)
+        );
         List<User> result = userDAO.getAll();
-        User user1 = new User("admin","admin","admin@mail.com","Admin",16,true);
-        User user2 = new User("qwe","qwe","qwe@mail.ru","User",15,true);
-        assertThat(result.toArray()).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(user1, user2);
+        assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test

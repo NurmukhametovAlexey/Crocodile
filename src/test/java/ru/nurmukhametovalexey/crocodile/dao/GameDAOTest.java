@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import ru.nurmukhametovalexey.crocodile.model.Game;
 import ru.nurmukhametovalexey.crocodile.model.GameStatus;
-import ru.nurmukhametovalexey.crocodile.model.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,9 +22,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
         "classpath:game_schema.sql", "classpath:game_test_data.sql"})
 class GameDAOTest {
 
-    private JdbcTemplate jdbcTemplate;
-    private GameDAO gameDAO;
-    private DateTimeFormatter formatter;
+    private final JdbcTemplate jdbcTemplate;
+    private final GameDAO gameDAO;
+    private final DateTimeFormatter formatter;
 
     @Autowired
     public GameDAOTest(JdbcTemplate jdbcTemplate) {
@@ -33,12 +32,7 @@ class GameDAOTest {
         this.gameDAO = new GameDAO(jdbcTemplate);
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     }
-    /*
-    ('uuid1','easy','2021-07-01 10:10:10',null,'NEW'),
-            ('uuid2','medium','2021-07-01 10:10:10','2021-07-01 10:12:10','FINISHED'),
-            ('uuid3','hard','2021-07-01 10:10:10','2021-07-01 10:11:10','CANCELLED'),
-            ('uuid4','easy','2021-07-01 10:10:10',null,'IN_PROGRESS')
-*/
+
     @Test
     void getGameByUUID() {
         Game expected = new Game("uuid1","easy", LocalDateTime.parse("2021-07-01 10:10:10", formatter),null, GameStatus.NEW);

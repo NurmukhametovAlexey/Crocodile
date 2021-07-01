@@ -67,6 +67,11 @@ public class GameUserDAO {
     }
 
     public boolean delete(GameUser gameUser) {
+
+        if(gameUser == null) {
+            return false;
+        }
+
         int rowsAffected = jdbcTemplate.update(
                 "DELETE FROM GameUser WHERE gameUUID=? AND login=?",
                 gameUser.getGameUUID(), gameUser.getLogin()
