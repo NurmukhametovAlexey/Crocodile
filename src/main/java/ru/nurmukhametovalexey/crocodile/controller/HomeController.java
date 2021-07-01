@@ -97,7 +97,7 @@ public class HomeController {
     public ModelAndView getAllUsers(Principal principal) {
         log.info("getAllUsers called");
         ModelAndView modelAndView = new ModelAndView("leaderboard");
-        modelAndView.addObject("users", daoService.getUserDAO().getAllScoresDesc());
+        modelAndView.addObject("users", daoService.getUserDAO().getAllOrderByScoresDesc());
         if (principal != null) {
             modelAndView.addObject("user", principal.getName());
         }

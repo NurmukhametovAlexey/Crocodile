@@ -20,7 +20,6 @@ public class UserDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Nullable
     public List<User> getAll() {
         return  jdbcTemplate.query(
                 "SELECT * FROM \"User\"",
@@ -28,8 +27,7 @@ public class UserDAO {
         );
     }
 
-    @Nullable
-    public List<User> getAllScoresDesc() {
+    public List<User> getAllOrderByScoresDesc() {
         return  jdbcTemplate.query(
                 "SELECT * FROM \"User\" ORDER BY score DESC",
                 new BeanPropertyRowMapper<>(User.class)
@@ -56,7 +54,7 @@ public class UserDAO {
                 user.getLogin(), user.getPassword(), user.getEmail(), user.getRole(), user.getScore(), user.getEnabled()
         );
         log.info("user save: {}, rows affected: {}", user, rowsAffected);
-        return rowsAffected!=0;
+        return rowsAffected==1;
     }
 
     public boolean update(User user) {
@@ -67,6 +65,6 @@ public class UserDAO {
                 user.getLogin()
         );
         log.info("user update: {}, rows affected: {}", user, rowsAffected);
-        return rowsAffected!=0;
+        return rowsAffected==1;
     }
 }
