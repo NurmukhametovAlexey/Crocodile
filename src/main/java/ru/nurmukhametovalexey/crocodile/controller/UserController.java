@@ -20,8 +20,8 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    private DaoService daoService;
-    private PasswordEncoder passwordEncoder;
+    private final DaoService daoService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserController(DaoService daoService, PasswordEncoder passwordEncoder) {
@@ -34,7 +34,7 @@ public class UserController {
                                 Principal principal, RedirectAttributes attributes) {
         log.info("account: {}", principal.getName());
 
-        User user = daoService.getUserDAO().getUserByLogin(principal.getName());;
+        User user = daoService.getUserDAO().getUserByLogin(principal.getName());
         if (user == null) {
             attributes.addFlashAttribute("errorMessage", "Can`t find user with login: " + principal.getName());
             return new ModelAndView("redirect:/error");
@@ -56,8 +56,7 @@ public class UserController {
 
         if (bindingResult.hasFieldErrors("email") || bindingResult.hasFieldErrors("password") &&
                 user.getPassword() != null && !user.getPassword().isBlank()) {
-            ModelAndView modelAndView = new ModelAndView("/user");
-            return modelAndView;
+            return new ModelAndView("/user");
         }
 
         if (user.getPassword() != null && !user.getPassword().isBlank()) {

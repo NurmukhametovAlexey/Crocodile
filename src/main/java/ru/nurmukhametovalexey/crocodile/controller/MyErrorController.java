@@ -17,9 +17,7 @@ public class MyErrorController implements ErrorController {
         log.info("errorPage. Message: {}. Principal: {}", errorMessage, principal.getName());
         ModelAndView modelAndView = new ModelAndView("/error");
         modelAndView.addObject("errorMessage", errorMessage);
-        if (principal != null) {
-            modelAndView.addObject("user", principal.getName());
-        }
+        modelAndView.addObject("user", principal.getName());
         return modelAndView;
     }
 }

@@ -21,7 +21,6 @@ public class DictionaryDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Nullable
     public List<Dictionary> getAll() {
         return  jdbcTemplate.query(
                 "SELECT * FROM Dictionary",
@@ -29,7 +28,6 @@ public class DictionaryDAO {
         );
     }
 
-    @Nullable
     public List<Dictionary> getWordsByDifficulty(int difficulty) {
         return  jdbcTemplate.query(
                 "SELECT * FROM Dictionary WHERE difficulty=?",
@@ -41,7 +39,12 @@ public class DictionaryDAO {
     @Nullable
     public Dictionary getRandomWordByDifficulty(int difficulty) {
        List<Dictionary> dictionaryList = getWordsByDifficulty(difficulty);
-       return dictionaryList.get(ThreadLocalRandom.current().nextInt(0, dictionaryList.size()));
+       try {
+           return dictionaryList.get(ThreadLocalRandom.current().nextInt(0, dictionaryList.size()));
+       } catch (IllegalArgumentException e) {
+           return null;
+       }
+
     }
 
     @Nullable

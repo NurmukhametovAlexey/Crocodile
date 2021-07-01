@@ -66,17 +66,17 @@ public class DaoService {
     @Nullable
     public String getActiveGameUuidByLogin(String login) {
         List<String> activeGameUUIDS = gameDAO.getActiveGames().stream()
-                .map(game -> game.getGameUUID())
+                .map(Game::getGameUUID)
                 .collect(Collectors.toList());
         log.info("active games: {}", activeGameUUIDS);
         List<String> userGameUUIDS = gameUserDAO.getGameUserByLogin(login).stream()
-                .map(gameUser -> gameUser.getGameUUID())
+                .map(GameUser::getGameUUID)
                 .collect(Collectors.toList());
         log.info("user games: {}", userGameUUIDS);
 
 
         return activeGameUUIDS.stream()
-               .filter(gameUUID -> userGameUUIDS.contains(gameUUID))
+               .filter(userGameUUIDS::contains)
                 .findAny()
                 .orElse(null);
     }

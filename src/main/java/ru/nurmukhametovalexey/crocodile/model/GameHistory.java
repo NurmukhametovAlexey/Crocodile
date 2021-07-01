@@ -1,7 +1,6 @@
 package ru.nurmukhametovalexey.crocodile.model;
 
 import lombok.*;
-import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
 
 @Getter
 @Setter

@@ -29,7 +29,7 @@ public class GameService {
     private final DaoService daoService;
 
     public Game createGame(String creatorLogin, Integer difficulty)
-            throws UserNotFoundException, InvalidGameStateException, DictionaryException {
+            throws UserNotFoundException, DictionaryException {
 
         if(creatorLogin == null || difficulty == null) {
             throw new IllegalArgumentException("login and difficulty cannot be null!");
@@ -145,7 +145,7 @@ public class GameService {
         }
 
         return chat.stream()
-                .map(c -> chatMessageToString(c))
+                .map(this::chatMessageToString)
                 .collect(Collectors.toList());
     }
 

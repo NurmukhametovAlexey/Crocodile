@@ -2,7 +2,6 @@ package ru.nurmukhametovalexey.crocodile.controller.dto;
 
 import lombok.*;
 import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
-import ru.nurmukhametovalexey.crocodile.model.User;
 
 @Getter
 @Setter

@@ -12,8 +12,8 @@ import ru.nurmukhametovalexey.crocodile.model.User;
 @Component
 public class DefaultUsers implements InitializingBean {
 
-    private UserDAO userDAO;
-    private PasswordEncoder passwordEncoder;
+    private final UserDAO userDAO;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public DefaultUsers(UserDAO userDAO, PasswordEncoder passwordEncoder) {

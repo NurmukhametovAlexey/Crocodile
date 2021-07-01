@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import ru.nurmukhametovalexey.crocodile.model.GameHistory;
 import ru.nurmukhametovalexey.crocodile.model.GameUser;
 import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
 
@@ -21,16 +20,6 @@ public class GameUserDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Nullable
-    public List<GameUser> getGameUserByGameUUID(String gameUUID) {
-        return jdbcTemplate.query(
-                "SELECT * FROM GameUser WHERE gameUUID=?",
-                new BeanPropertyRowMapper<>(GameUser.class),
-                gameUUID
-        );
-    }
-
-    @Nullable
     public List<GameUser> getGameUserByGameUuidAndRole(String gameUUID, PlayerRole playerRole) {
         return jdbcTemplate.query(
                 "SELECT * FROM GameUser WHERE gameUUID=? AND playerRole=?::playerstatus",
@@ -39,7 +28,6 @@ public class GameUserDAO {
         );
     }
 
-    @Nullable
     public List<GameUser> getGameUserByLogin(String login) {
         return jdbcTemplate.query(
                 "SELECT * FROM GameUser WHERE login=?",
@@ -48,16 +36,14 @@ public class GameUserDAO {
         );
     }
 
-
     @Nullable
     public GameUser getByGameUuidAndLogin(String gameUUID, String login) {
-         GameUser gameUser = jdbcTemplate.query(
-                "SELECT * FROM GameUser WHERE gameUUID=? AND login=?",
-                new BeanPropertyRowMapper<>(GameUser.class),
-                gameUUID, login
-        ).stream().findAny().orElse(null);
 
-         return gameUser;
+        return jdbcTemplate.query(
+               "SELECT * FROM GameUser WHERE gameUUID=? AND login=?",
+               new BeanPropertyRowMapper<>(GameUser.class),
+               gameUUID, login
+       ).stream().findAny().orElse(null);
     }
 
     public boolean save(GameUser gameUser) {
