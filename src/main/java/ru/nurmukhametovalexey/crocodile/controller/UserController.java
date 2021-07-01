@@ -2,14 +2,12 @@ package ru.nurmukhametovalexey.crocodile.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.nurmukhametovalexey.crocodile.model.GameHistory;
-import ru.nurmukhametovalexey.crocodile.model.GameUser;
 import ru.nurmukhametovalexey.crocodile.model.User;
 import ru.nurmukhametovalexey.crocodile.service.DaoService;
 
