@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.nurmukhametovalexey.crocodile.dao.ComplexDao;
+import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 import ru.nurmukhametovalexey.crocodile.exception.DictionaryException;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
 import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
@@ -26,7 +28,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class GameService {
-    private final DaoService daoService;
+    private final UserDAO userDAO;
+    private final ComplexDao complexDao;
+
 
     public Game createGame(String creatorLogin, Integer difficulty)
             throws UserNotFoundException, DictionaryException {
@@ -34,11 +38,11 @@ public class GameService {
         if(creatorLogin == null || difficulty == null) {
             throw new IllegalArgumentException("login and difficulty cannot be null!");
         }
-        else if(daoService.getUserDAO().getUserByLogin(creatorLogin) == null) {
+        else if(userDAO.getUserByLogin(creatorLogin) == null) {
             throw new UserNotFoundException("User with name " + creatorLogin + " doesnt exist!");
         }
 
-        Dictionary dictionary = daoService.getDictionaryDAO().getRandomWordByDifficulty(difficulty);
+        Dictionary dictionary = complexDao.getDictionaryDAO().getRandomWordByDifficulty(difficulty);
 
         if(dictionary == null) {
             throw new DictionaryException("No words with difficulty " + difficulty);
@@ -49,20 +53,20 @@ public class GameService {
         game.setWord(dictionary.getWord());
         game.setStatus(GameStatus.NEW);
         game.setTimeStarted(LocalDateTime.now());
-        daoService.getGameDAO().save(game);
+        complexDao.getGameDAO().save(game);
 
         GameUser gameUser = new GameUser();
         gameUser.setLogin(creatorLogin);
         gameUser.setGameUUID(game.getGameUUID());
         gameUser.setPlayerRole(PlayerRole.PAINTER);
-        daoService.getGameUserDAO().save(gameUser);
+        complexDao.getGameUserDAO().save(gameUser);
 
         Chat chat = new Chat();
         chat.setTimeSent(LocalDateTime.now());
         chat.setMessage("joined as painter");
         chat.setGameUUID(game.getGameUUID());
         chat.setLogin(creatorLogin);
-        daoService.getChatDAO().save(chat);
+        complexDao.getChatDAO().save(chat);
 
         return game;
     }
@@ -70,11 +74,11 @@ public class GameService {
     public Game connectByUUID(String gameUUID, String newPlayerLogin, PlayerRole playerRole)
             throws GameNotFoundException, InvalidGameStateException, UserNotFoundException {
 
-        if (daoService.getUserDAO().getUserByLogin(newPlayerLogin) == null) {
+        if (userDAO.getUserByLogin(newPlayerLogin) == null) {
             throw new UserNotFoundException("User with name " + newPlayerLogin + " doesnt exist!");
         }
 
-        Game game = daoService.getGameDAO().getGameByUUID(gameUUID);
+        Game game = complexDao.getGameDAO().getGameByUUID(gameUUID);
         if (game == null) {
             throw new GameNotFoundException("Game with uuid not found: " + gameUUID);
         }
@@ -85,18 +89,18 @@ public class GameService {
             throw new InvalidGameStateException("Game is already finished: " + gameUUID);
         }
         else if (playerRole == PlayerRole.PAINTER &&
-                daoService.getGameUserDAO().getGameUserByGameUuidAndRole(gameUUID, PlayerRole.PAINTER) != null) {
+                complexDao.getGameUserDAO().getGameUserByGameUuidAndRole(gameUUID, PlayerRole.PAINTER) != null) {
             throw new InvalidGameStateException("This game already has a painter!");
         }
 
-        if (daoService.getGameUserDAO().getByGameUuidAndLogin(gameUUID, newPlayerLogin) == null) {
+        if (complexDao.getGameUserDAO().getByGameUuidAndLogin(gameUUID, newPlayerLogin) == null) {
             log.info("Player reconnecting... " + newPlayerLogin);
             GameUser gameUser = new GameUser();
             gameUser.setLogin(newPlayerLogin);
             gameUser.setGameUUID(gameUUID);
             gameUser.setPlayerRole(playerRole);
 
-            daoService.getGameUserDAO().save(gameUser);
+            complexDao.getGameUserDAO().save(gameUser);
         }
 
         Chat chat = new Chat();
@@ -104,14 +108,14 @@ public class GameService {
         chat.setMessage("joined as guesser");
         chat.setGameUUID(game.getGameUUID());
         chat.setLogin(newPlayerLogin);
-        daoService.getChatDAO().save(chat);
+        complexDao.getChatDAO().save(chat);
 
         return game;
     }
 
     public Game gamePlay(Chat message) throws GameNotFoundException, InvalidGameStateException {
 
-        Game game = daoService.getGameDAO().getGameByUUID(message.getGameUUID());
+        Game game = complexDao.getGameDAO().getGameByUUID(message.getGameUUID());
         if(game == null) {
             throw new GameNotFoundException("Game not found: " + message.getGameUUID());
         }
@@ -127,11 +131,11 @@ public class GameService {
             chat.setMessage("wins!");
             chat.setGameUUID(game.getGameUUID());
             chat.setLogin(message.getLogin());
-            daoService.getChatDAO().save(chat);
+            complexDao.getChatDAO().save(chat);
 
             game.setStatus(GameStatus.FINISHED);
             game.setTimeFinished(LocalDateTime.now());
-            daoService.getGameDAO().update(game);
+            complexDao.getGameDAO().update(game);
 
         }
         return game;
@@ -139,7 +143,7 @@ public class GameService {
 
     public List<String> loadChat(String gameUUID) throws GameNotFoundException {
 
-        List<Chat> chat = daoService.getChatDAO().getChatByGameUUID(gameUUID);
+        List<Chat> chat = complexDao.getChatDAO().getChatByGameUUID(gameUUID);
         if(chat == null) {
             throw new GameNotFoundException("No chat for game, probably the game doesn`t exist! " + gameUUID);
         }
@@ -157,30 +161,30 @@ public class GameService {
     }
 
     public Map<String, Integer> increaseWinnersScore(String gameuuid, String guesserLogin) throws InvalidGameStateException, GameNotFoundException, DictionaryException {
-        Game game = daoService.getGameDAO().getGameByUUID(gameuuid);
-        GameUser gamePainter = daoService.getGameUserDAO().getGameUserByGameUuidAndRole(
+        Game game = complexDao.getGameDAO().getGameByUUID(gameuuid);
+        GameUser gamePainter = complexDao.getGameUserDAO().getGameUserByGameUuidAndRole(
                 game.getGameUUID(), PlayerRole.PAINTER).stream()
                 .findAny().orElseThrow(() -> new InvalidGameStateException("Game doesn`t have a painter!"));
 
-        GameUser gameGuesser = daoService.getGameUserDAO().getByGameUuidAndLogin(game.getGameUUID(), guesserLogin);
+        GameUser gameGuesser = complexDao.getGameUserDAO().getByGameUuidAndLogin(game.getGameUUID(), guesserLogin);
         if (gameGuesser == null) {
             throw new InvalidGameStateException("Game doesn`t have a winning guesser!");
         }
 
         Map<String, Integer> roleBountyMap = new HashMap<>();
 
-        User painter = daoService.getUserDAO().getUserByLogin(gamePainter.getLogin());
-        Integer painterBounty = daoService.getBountyByGameUUIDAndRole(gameuuid, PlayerRole.PAINTER);
+        User painter = userDAO.getUserByLogin(gamePainter.getLogin());
+        Integer painterBounty = complexDao.getBountyByGameUUIDAndRole(gameuuid, PlayerRole.PAINTER);
         painter.increaseScore(painterBounty);
         log.info("Painter: {} has score {}",painter,painter.getScore());
-        daoService.getUserDAO().update(painter);
+        userDAO.update(painter);
         roleBountyMap.put("Painter " + painter.getLogin(), painterBounty);
 
-        User guesser = daoService.getUserDAO().getUserByLogin(gameGuesser.getLogin());
-        Integer guesserBounty = daoService.getBountyByGameUUIDAndRole(gameuuid, PlayerRole.GUESSER);
+        User guesser = userDAO.getUserByLogin(gameGuesser.getLogin());
+        Integer guesserBounty = complexDao.getBountyByGameUUIDAndRole(gameuuid, PlayerRole.GUESSER);
         guesser.increaseScore(guesserBounty);
         log.info("Guesser: {} has score {}",guesser,guesser.getScore());
-        daoService.getUserDAO().update(guesser);
+        userDAO.update(guesser);
         roleBountyMap.put("Guesser " + guesser.getLogin(), guesserBounty);
 
         return roleBountyMap;

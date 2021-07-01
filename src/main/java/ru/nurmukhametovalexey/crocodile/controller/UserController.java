@@ -7,9 +7,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 import ru.nurmukhametovalexey.crocodile.model.GameHistory;
 import ru.nurmukhametovalexey.crocodile.model.User;
-import ru.nurmukhametovalexey.crocodile.service.DaoService;
+import ru.nurmukhametovalexey.crocodile.dao.ComplexDao;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -19,13 +20,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
-    private final DaoService daoService;
+    private final UserDAO userDAO;
+    private final ComplexDao complexDao;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(DaoService daoService, PasswordEncoder passwordEncoder) {
-        this.daoService = daoService;
+    public UserController(UserDAO userDAO, ComplexDao complexDao, PasswordEncoder passwordEncoder) {
+        this.userDAO = userDAO;
+        this.complexDao = complexDao;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -34,7 +36,7 @@ public class UserController {
                                 Principal principal, RedirectAttributes attributes) {
         log.info("account: {}", principal.getName());
 
-        User user = daoService.getUserDAO().getUserByLogin(principal.getName());
+        User user = userDAO.getUserByLogin(principal.getName());
         if (user == null) {
             attributes.addFlashAttribute("errorMessage", "Can`t find user with login: " + principal.getName());
             return new ModelAndView("redirect:/error");
@@ -52,7 +54,7 @@ public class UserController {
                                       BindingResult bindingResult, RedirectAttributes attributes) {
         log.info("account update: {}, binding result: {}", user, bindingResult.toString());
 
-        User initialUser = daoService.getUserDAO().getUserByLogin(principal.getName());
+        User initialUser = userDAO.getUserByLogin(principal.getName());
 
         if (bindingResult.hasFieldErrors("email") || bindingResult.hasFieldErrors("password") &&
                 user.getPassword() != null && !user.getPassword().isBlank()) {
@@ -67,7 +69,7 @@ public class UserController {
             initialUser.setEmail(user.getEmail());
         }
 
-        daoService.getUserDAO().update(initialUser);
+        userDAO.update(initialUser);
         attributes.addFlashAttribute("success", true);
         return new ModelAndView("redirect:/user");
     }
@@ -76,7 +78,7 @@ public class UserController {
     public ModelAndView gameHistory(Principal principal) {
         log.info("game history: {}", principal.getName());
 
-        List<GameHistory> gameHistoryList = daoService.getGameHistoryByLogin(principal.getName());
+        List<GameHistory> gameHistoryList = complexDao.getGameHistoryByLogin(principal.getName());
 
         ModelAndView modelAndView = new ModelAndView("/gameHistory");
         modelAndView.addObject("user", principal.getName());

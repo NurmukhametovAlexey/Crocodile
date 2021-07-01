@@ -1,17 +1,13 @@
-package ru.nurmukhametovalexey.crocodile.service;
+package ru.nurmukhametovalexey.crocodile.dao;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.nurmukhametovalexey.crocodile.model.GameHistory;
-import ru.nurmukhametovalexey.crocodile.dao.*;
-import ru.nurmukhametovalexey.crocodile.exception.DictionaryException;
-import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
-import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
 import ru.nurmukhametovalexey.crocodile.model.*;
 
 import java.time.LocalDateTime;
@@ -21,9 +17,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @Setter
-@AllArgsConstructor
 @Service
-public class DaoService {
+public class ComplexDao {
     private final JdbcTemplate jdbcTemplate;
     private final UserDAO userDAO;
     private final GameDAO gameDAO;
@@ -31,36 +26,40 @@ public class DaoService {
     private  final DictionaryDAO dictionaryDAO;
     private final ChatDAO chatDAO;
 
-    @Nullable
-    public Integer getDifficultyByGameUUID(String gameUUID) throws
-            GameNotFoundException, InvalidGameStateException, DictionaryException {
-        Game game = gameDAO.getGameByUUID(gameUUID);
-
-        if (game == null) {
-            throw new GameNotFoundException("Game with uuid not found: " + gameUUID);
-        }
-        else if (game.getWord() == null) {
-            throw new InvalidGameStateException("Game does not have secret word! uuid: " + gameUUID);
-        }
-
-        Integer difficulty = dictionaryDAO.getDifficultyByWord(game.getWord());
-
-        if (difficulty == null) {
-            throw new DictionaryException("Word not found: " + game.getWord());
-        }
-
-        return difficulty;
+    @Autowired
+    public ComplexDao(JdbcTemplate jdbcTemplate, UserDAO userDAO, GameDAO gameDAO,
+                      GameUserDAO gameUserDAO, DictionaryDAO dictionaryDAO, ChatDAO chatDAO) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
+        this.gameUserDAO = gameUserDAO;
+        this.dictionaryDAO = dictionaryDAO;
+        this.chatDAO = chatDAO;
     }
 
     @Nullable
-    public Integer getBountyByGameUUIDAndRole(String gameUUID, PlayerRole playerRole)
-            throws InvalidGameStateException, GameNotFoundException, DictionaryException {
-        Integer initialPoints = 1;
-        if (playerRole == PlayerRole.GUESSER) {
-            initialPoints *= gameUserDAO.getGameUserByGameUuidAndRole(gameUUID, PlayerRole.GUESSER).size();
+    public Integer getDifficultyByGameUUID(String gameUUID) {
+        Game game = gameDAO.getGameByUUID(gameUUID);
+        if (game == null) {
+            return null;
+        } else {
+            return dictionaryDAO.getDifficultyByWord(game.getWord());
         }
-        Integer difficulty = getDifficultyByGameUUID(gameUUID);
-        return initialPoints*difficulty;
+    }
+
+    @Nullable
+    public Integer getBountyByGameUUIDAndRole(String gameUUID, PlayerRole playerRole) {
+        try {
+            Integer initialPoints = 1;
+            if (playerRole == PlayerRole.GUESSER) {
+                initialPoints *= gameUserDAO.getGameUserByGameUuidAndRole(gameUUID, PlayerRole.GUESSER).size();
+            }
+            Integer difficulty = getDifficultyByGameUUID(gameUUID);
+            return initialPoints*difficulty;
+        } catch (NullPointerException e) {
+            return null;
+        }
+
     }
 
     @Nullable
@@ -91,7 +90,6 @@ public class DaoService {
         return chatMessage;
     }
 
-    @Nullable
     public List<GameHistory> getGameHistoryByLogin(String login) {
         List<GameHistory> gameHistoryList = jdbcTemplate.query(
                 "SELECT * FROM GameUser NATURAL JOIN Game WHERE login=? AND timefinished IS NOT NULL ORDER BY timeStarted DESC",

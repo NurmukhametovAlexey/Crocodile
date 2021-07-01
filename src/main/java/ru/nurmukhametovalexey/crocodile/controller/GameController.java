@@ -29,8 +29,8 @@ public class GameController {
     public ModelAndView show(@PathVariable String gameUUID, Principal principal, RedirectAttributes attributes) {
 
         try {
-            Game game = gameService.getDaoService().getGameDAO().getGameByUUID(gameUUID);
-            PlayerRole playerRole = gameService.getDaoService().getGameUserDAO()
+            Game game = gameService.getComplexDao().getGameDAO().getGameByUUID(gameUUID);
+            PlayerRole playerRole = gameService.getComplexDao().getGameUserDAO()
                     .getByGameUuidAndLogin(gameUUID, principal.getName()).getPlayerRole();
 
             ModelAndView modelAndView = new ModelAndView("/game");
@@ -89,7 +89,7 @@ public class GameController {
         chatMessage.setLogin(principal.getName());
         chatMessage.setTimeSent(LocalDateTime.now());
 
-        chatMessage = gameService.getDaoService().getChatDAO().getChatByGameUUID(game.getGameUUID()).stream()
+        chatMessage = gameService.getComplexDao().getChatDAO().getChatByGameUUID(game.getGameUUID()).stream()
                 .filter(msg -> msg.getLogin().equals(principal.getName()))
                 .findAny()
                 .orElse(null);

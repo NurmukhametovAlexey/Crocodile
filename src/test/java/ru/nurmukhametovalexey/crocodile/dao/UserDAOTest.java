@@ -6,7 +6,6 @@ import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import ru.nurmukhametovalexey.crocodile.model.GameUser;
 import ru.nurmukhametovalexey.crocodile.model.User;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
