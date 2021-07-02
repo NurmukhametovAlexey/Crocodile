@@ -6,6 +6,8 @@ $( document ).ready(function() {
 
     console.log(chat);
 
+    downloadCanvas();
+
     if (gameStatus === "IN_PROGRESS") {
         beginTheGame();
     }

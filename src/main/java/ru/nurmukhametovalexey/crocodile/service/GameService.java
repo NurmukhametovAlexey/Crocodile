@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import ru.nurmukhametovalexey.crocodile.exception.DictionaryException;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
@@ -11,8 +14,12 @@ import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
 import ru.nurmukhametovalexey.crocodile.exception.UserNotFoundException;
 import ru.nurmukhametovalexey.crocodile.model.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +33,7 @@ import java.util.stream.Collectors;
 @Service
 public class GameService {
     private final DaoService daoService;
-
+    private final Environment env;
 
     public Game createGame(String creatorLogin, Integer difficulty)
             throws UserNotFoundException, DictionaryException {
@@ -153,5 +160,28 @@ public class GameService {
         roleBountyMap.put("Guesser " + guesser.getLogin(), guesserBounty);
 
         return roleBountyMap;
+    }
+
+    public void uploadCanvasImage(String rawBase64Image, String gameUUID) throws IOException {
+        String canvasStorageLocation = env.getProperty("canvas.storage-location");
+        log.info("canvasStorageLocation is {}", canvasStorageLocation);
+
+        String image = rawBase64Image.split(",")[1];
+        byte[] img = Base64.getDecoder().decode(image);
+        Files.write(Paths.get(canvasStorageLocation,gameUUID+".png"), img);
+    }
+
+    @Nullable
+    public String downloadCanvasImage(String gameUUID) {
+        log.info("downloading image: {}", gameUUID);
+        String canvasStorageLocation = env.getProperty("canvas.storage-location");
+        try {
+            byte[] img = Files.readAllBytes(Paths.get(canvasStorageLocation,gameUUID+".png"));
+            String base64Image = Base64.getEncoder().encodeToString(img);
+            return base64Image;
+        } catch (IOException e) {
+            log.info("unable to open canvas image: {}", gameUUID);
+            return null;
+        }
     }
 }

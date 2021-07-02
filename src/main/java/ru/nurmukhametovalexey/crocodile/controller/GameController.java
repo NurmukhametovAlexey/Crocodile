@@ -1,7 +1,12 @@
 package ru.nurmukhametovalexey.crocodile.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,6 +19,7 @@ import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
 import ru.nurmukhametovalexey.crocodile.service.DaoService;
 import ru.nurmukhametovalexey.crocodile.service.GameService;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 
@@ -22,10 +28,13 @@ import java.time.LocalDateTime;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/game")
+@PropertySource("classpath:application.properties")
 public class GameController {
     private final GameService gameService;
     private final DaoService daoService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+
+
 
     @GetMapping("/{gameUUID}")
     public ModelAndView show(@PathVariable String gameUUID, Principal principal, RedirectAttributes attributes) {
@@ -109,4 +118,32 @@ public class GameController {
 
     }
 
+    @PostMapping("/{gameUUID}/upload-canvas")
+    public ResponseEntity uploadCanvas(@PathVariable String gameUUID, @RequestBody String rawBase64Image) {
+
+
+        log.info("upload canvas, image:  {}", rawBase64Image);
+        try {
+            gameService.uploadCanvasImage(rawBase64Image, gameUUID);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{gameUUID}/download-canvas")
+    public @ResponseBody String downloadCanvas(@PathVariable String gameUUID) {
+        String canvasImage = gameService.downloadCanvasImage(gameUUID);
+        log.info("canvas image: {}", canvasImage);
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode imageJson = mapper.createObjectNode();
+        imageJson.put("image", canvasImage);
+
+        try {
+            return mapper.writeValueAsString(imageJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -61,6 +61,9 @@
             <li th:if="${userRole} != 'PAINTER'" class="nav-item">
                 <a class="nav-link" id="link-game-leave" href="/">Leave</a>
             </li>
+            <li th:if="${user != null}" class="nav-item">
+                <a class="nav-link" href="/user">My profile</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/logout">Log out</a>
             </li>
@@ -134,15 +137,6 @@
             W = cnv.width;
             H = cnv.height;
 
-            /*createImageBitmap(img, {
-                resizeWidth: W,
-                resizeHeight: H,
-                premultiplyAlpha: "none",
-                colorSpaceConversion: "none",
-                resizeQuality: "high"
-            }).then(function(bitmap) {
-                ctx.drawImage(bitmap, 0, 0);
-            });*/
             createImageBitmap(img).then(function(bitmap) {
                 ctx.drawImage(bitmap, 0, 0, W, H);
             });

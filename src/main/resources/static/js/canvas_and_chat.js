@@ -1,5 +1,6 @@
 let canvas = {};
 let canvas_context;
+const default_resolution = {w: 640, h: 480};
 
 function initPainting() {
     canvas.source = $("#canvas-game");
@@ -70,6 +71,46 @@ function disableCanvas() {
     }
 }
 
+function uploadCanvas() {
+    //let canvas_image = canvas_context.getImageData(0,0, W, H);
+    let canvas_image = canvas.source[0].toDataURL('image/png');
+    console.log("uploading canvas...");
+    $.ajax({
+        url: "/game/" + gameUUID + "/upload-canvas",
+        type: "POST",
+        data: canvas_image,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            console.log("canvas successfully uploaded");
+            // .. do something
+        },
+        error: function(jqXHR, textStatus, errorMessage) {
+            console.log(errorMessage); // Optional
+        }
+    });
+}
+
+function downloadCanvas() {
+    $.ajax({
+        url: "/game/" + gameUUID + "/download-canvas",
+        type: 'GET',
+        dataType: "json",
+        contentType: "application/json",
+        success: function (data) {
+            console.log("got canvas image!");
+            let image = new Image();
+            image.onload = function() {
+                ctx.drawImage(image, 0, 0, W, H);
+            };
+            image.src = "data:image/png;base64," + data.image;
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    })
+}
+
 function writeMessage(message){
     document.getElementById("chat-box").innerHTML =
         document.getElementById("chat-box").innerHTML + message + "<br />";
@@ -103,6 +144,7 @@ function beginTheGame() {
 }
 
 function endTheGame() {
+    uploadCanvas();
     hideElement("form-chat-input");
     hideElement("btn-canvas-clear");
     hideElement("link-game-cancel");

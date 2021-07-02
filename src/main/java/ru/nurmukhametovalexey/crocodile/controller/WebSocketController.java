@@ -2,6 +2,7 @@ package ru.nurmukhametovalexey.crocodile.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -23,6 +24,7 @@ import ru.nurmukhametovalexey.crocodile.service.DaoService;
 import ru.nurmukhametovalexey.crocodile.service.GameService;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -96,6 +98,7 @@ public class WebSocketController {
             daoService.saveChatMessage(gameUUID, login, cancelMessage);
 
             Game game = daoService.getGameByUUID(gameUUID);
+            game.setTimeFinished(LocalDateTime.now());
             game.setStatus(GameStatus.CANCELLED);
             daoService.updateGame(game);
 
