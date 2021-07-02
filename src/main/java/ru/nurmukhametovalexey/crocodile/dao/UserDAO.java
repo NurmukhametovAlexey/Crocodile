@@ -35,7 +35,7 @@ public class UserDAO {
     }
 
     @Nullable
-    public User getUserByLogin(String login) {
+    public User getByLogin(String login) {
         return jdbcTemplate.query(
                 "SELECT * FROM \"User\" WHERE login=?",
                 new BeanPropertyRowMapper<>(User.class),

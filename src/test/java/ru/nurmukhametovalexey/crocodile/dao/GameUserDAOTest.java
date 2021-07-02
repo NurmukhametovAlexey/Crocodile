@@ -23,12 +23,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class GameUserDAOTest {
 
     private final JdbcTemplate jdbcTemplate;
-    private final GameUserDAO gameUserDAO;
+    private final GameUserDAO underTest;
 
     @Autowired
     public GameUserDAOTest(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        gameUserDAO = new GameUserDAO(jdbcTemplate);
+        underTest = new GameUserDAO(jdbcTemplate);
     }
 
     @Test
@@ -36,13 +36,13 @@ class GameUserDAOTest {
         List<GameUser> expected = Arrays.asList(
                 new GameUser("admin","uuid2", PlayerRole.GUESSER)
         );
-        List<GameUser> result = gameUserDAO.getGameUserByGameUuidAndRole("uuid2", PlayerRole.GUESSER);
+        List<GameUser> result = underTest.getByGameUuidAndRole("uuid2", PlayerRole.GUESSER);
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void getGameUserByGameUuidAndRole_IfNoGameUser_ShouldReturnEmptyList() {
-        List<GameUser> result = gameUserDAO.getGameUserByGameUuidAndRole("no such uuid", PlayerRole.GUESSER);
+        List<GameUser> result = underTest.getByGameUuidAndRole("no such uuid", PlayerRole.GUESSER);
         assertThat(result.toArray()).isEmpty();
     }
 
@@ -52,81 +52,81 @@ class GameUserDAOTest {
                 new GameUser("admin","uuid1", PlayerRole.PAINTER),
                 new GameUser("admin","uuid2", PlayerRole.GUESSER)
         );
-        List<GameUser> result = gameUserDAO.getGameUserByLogin("admin");
+        List<GameUser> result = underTest.getByLogin("admin");
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void getGameUserByLogin_IfNoGameUser_ShouldReturnEmptyList() {
-        List<GameUser> result = gameUserDAO.getGameUserByLogin("no such login");
+        List<GameUser> result = underTest.getByLogin("no such login");
         assertThat(result.toArray()).isEmpty();
     }
 
     @Test
     void getByGameUuidAndLogin() {
         GameUser expected = new GameUser("admin", "uuid1", PlayerRole.PAINTER);
-        GameUser result = gameUserDAO.getByGameUuidAndLogin("uuid1", "admin");
+        GameUser result = underTest.getByGameUuidAndLogin("uuid1", "admin");
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void getByGameUuidAndLogin_IfNoGameUser_ShouldReturnNull() {
-        GameUser result = gameUserDAO.getByGameUuidAndLogin("no such uuid", "no such login");
+        GameUser result = underTest.getByGameUuidAndLogin("no such uuid", "no such login");
         assertThat(result).isNull();
     }
 
     @Test
     void save() {
         GameUser gameUserToSave = new GameUser("admin","uuid3", PlayerRole.PAINTER);
-        Boolean result = gameUserDAO.save(gameUserToSave);
+        Boolean result = underTest.save(gameUserToSave);
         assertThat(result).isTrue();
-        GameUser savedGameUser = gameUserDAO.getByGameUuidAndLogin("uuid3", "admin");
+        GameUser savedGameUser = underTest.getByGameUuidAndLogin("uuid3", "admin");
         assertThat(savedGameUser).usingRecursiveComparison().isEqualTo(gameUserToSave);
     }
 
     @Test
     void save_IfPrimaryKeyViolated_ShouldThrowDataAccessException() {
         GameUser gameUserToSave = new GameUser("admin","uuid1", PlayerRole.GUESSER);
-        assertThatThrownBy(() -> gameUserDAO.save(gameUserToSave))
+        assertThatThrownBy(() -> underTest.save(gameUserToSave))
                 .isInstanceOf(DataAccessException.class);
     }
 
     @Test
     void save_IfForeignKeyViolated_ShouldThrowDataAccessException() {
         GameUser gameUserToSave = new GameUser("no such login","no such uuid", PlayerRole.GUESSER);
-        assertThatThrownBy(() -> gameUserDAO.save(gameUserToSave))
+        assertThatThrownBy(() -> underTest.save(gameUserToSave))
                 .isInstanceOf(DataAccessException.class);
     }
 
     @Test
     void update() {
         GameUser gameUserToUpdate = new GameUser("admin","uuid1", PlayerRole.GUESSER);
-        Boolean result = gameUserDAO.update(gameUserToUpdate);
+        Boolean result = underTest.update(gameUserToUpdate);
         assertThat(result).isTrue();
-        GameUser updatedGameUser = gameUserDAO.getByGameUuidAndLogin("uuid1", "admin");
+        GameUser updatedGameUser = underTest.getByGameUuidAndLogin("uuid1", "admin");
         assertThat(updatedGameUser).usingRecursiveComparison().isEqualTo(gameUserToUpdate);
     }
 
     @Test
     void update_IfNoGameUserToUpdate_ShouldNotAffectRows() {
         GameUser gameUserToUpdate = new GameUser("no such login","uuid1", PlayerRole.PAINTER);
-        Boolean result = gameUserDAO.update(gameUserToUpdate);
+        Boolean result = underTest.update(gameUserToUpdate);
         assertThat(result).isFalse();
     }
 
     @Test
     void delete() {
-        GameUser gameUserToDelete = gameUserDAO.getByGameUuidAndLogin("uuid1", "admin");
-        Boolean result = gameUserDAO.delete(gameUserToDelete);
+        GameUser gameUserToDelete = underTest.getByGameUuidAndLogin("uuid1", "admin");
+        Boolean result = underTest.delete(gameUserToDelete);
         assertThat(result).isTrue();
-        GameUser deletedGameUser = gameUserDAO.getByGameUuidAndLogin("uuid1", "admin");
+        GameUser deletedGameUser = underTest.getByGameUuidAndLogin("uuid1", "admin");
         assertThat(deletedGameUser).isNull();
     }
 
     @Test
     void delete_IfNoGameUserToDelete_ShouldNotAffectRows() {
-        GameUser gameUserToDelete = gameUserDAO.getByGameUuidAndLogin("no such login", "admin");
-        Boolean result = gameUserDAO.delete(gameUserToDelete);
+        GameUser gameUserToDelete = underTest.getByGameUuidAndLogin("no such login", "admin");
+        Boolean result = underTest.delete(gameUserToDelete);
         assertThat(result).isFalse();
     }
 }

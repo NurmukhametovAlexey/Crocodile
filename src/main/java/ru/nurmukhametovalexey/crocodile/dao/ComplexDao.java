@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import ru.nurmukhametovalexey.crocodile.model.GameHistory;
 import ru.nurmukhametovalexey.crocodile.model.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +38,7 @@ public class ComplexDao {
 
     @Nullable
     public Integer getDifficultyByGameUUID(String gameUUID) {
-        Game game = gameDAO.getGameByUUID(gameUUID);
+        Game game = gameDAO.getByUUID(gameUUID);
         if (game == null) {
             return null;
         } else {
@@ -52,23 +51,22 @@ public class ComplexDao {
         try {
             Integer initialPoints = 1;
             if (playerRole == PlayerRole.GUESSER) {
-                initialPoints *= gameUserDAO.getGameUserByGameUuidAndRole(gameUUID, PlayerRole.GUESSER).size();
+                initialPoints *= gameUserDAO.getByGameUuidAndRole(gameUUID, PlayerRole.GUESSER).size();
             }
             Integer difficulty = getDifficultyByGameUUID(gameUUID);
             return initialPoints*difficulty;
         } catch (NullPointerException e) {
             return null;
         }
-
     }
 
     @Nullable
     public String getActiveGameUuidByLogin(String login) {
-        List<String> activeGameUUIDS = gameDAO.getActiveGames().stream()
+        List<String> activeGameUUIDS = gameDAO.getActiveGamesList().stream()
                 .map(Game::getGameUUID)
                 .collect(Collectors.toList());
         log.info("active games: {}", activeGameUUIDS);
-        List<String> userGameUUIDS = gameUserDAO.getGameUserByLogin(login).stream()
+        List<String> userGameUUIDS = gameUserDAO.getByLogin(login).stream()
                 .map(GameUser::getGameUUID)
                 .collect(Collectors.toList());
         log.info("user games: {}", userGameUUIDS);
@@ -78,16 +76,6 @@ public class ComplexDao {
                .filter(userGameUUIDS::contains)
                 .findAny()
                 .orElse(null);
-    }
-
-    public Chat saveChatMessage(String gameUUID, String login, String message) {
-        Chat chatMessage = new Chat();
-        chatMessage.setGameUUID(gameUUID);
-        chatMessage.setLogin(login);
-        chatMessage.setMessage(message);
-        chatMessage.setTimeSent(LocalDateTime.now());
-        chatDAO.save(chatMessage);
-        return chatMessage;
     }
 
     public List<GameHistory> getGameHistoryByLogin(String login) {

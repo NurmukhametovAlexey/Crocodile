@@ -21,12 +21,12 @@ class UserDAOTest {
 
 
     private final JdbcTemplate jdbcTemplate;
-    private final UserDAO userDAO;
+    private final UserDAO underTest;
 
     @Autowired
     public UserDAOTest(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        userDAO = new UserDAO(jdbcTemplate);
+        underTest = new UserDAO(jdbcTemplate);
     }
 
     @Test
@@ -35,20 +35,20 @@ class UserDAOTest {
                 new User("admin","admin","admin@mail.com","Admin",16,true),
                 new User("qwe","qwe","qwe@mail.ru","User",15,true)
         );
-        List<User> result = userDAO.getAll();
+        List<User> result = underTest.getAll();
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void getAll_IfNoUsers_ShouldReturnEmptyList() {
         jdbcTemplate.update("delete from \"User\"");
-        List<User> result = userDAO.getAll();
+        List<User> result = underTest.getAll();
         assertThat(result.toArray()).isEmpty();
     }
 
     @Test
     void getAllOrderByScoresDesc() {
-        List<User> result = userDAO.getAll();
+        List<User> result = underTest.getAll();
         User user1 = new User("admin","admin","admin@mail.com","Admin",16,true);
         User user2 = new User("qwe","qwe","qwe@mail.ru","User",15,true);
         assertThat(result.toArray()).usingRecursiveFieldByFieldElementComparator().containsExactly(user1, user2);
@@ -57,36 +57,36 @@ class UserDAOTest {
     @Test
     void getAllOrderByScoresDesc_IfNoUsers_ShouldReturnEmptyList() {
         jdbcTemplate.update("delete from \"User\"");
-        List<User> result = userDAO.getAll();
+        List<User> result = underTest.getAll();
         assertThat(result.toArray()).isEmpty();
     }
 
     @Test
     void getUserByLogin() {
-        User result = userDAO.getUserByLogin("admin");
+        User result = underTest.getByLogin("admin");
         User expected = new User("admin","admin","admin@mail.com","Admin",16,true);
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void getUserByLogin_IfNoLogin_ShouldReturnNull() {
-        User result = userDAO.getUserByLogin("no such user");
+        User result = underTest.getByLogin("no such user");
         assertThat(result).isNull();
     }
 
     @Test
     void save() {
         User userToSave = new User("test","test","test@mail.com","User",0,true);
-        Boolean result = userDAO.save(userToSave);
+        Boolean result = underTest.save(userToSave);
         assertThat(result).isTrue();
-        List<User> newUserList = userDAO.getAll();
+        List<User> newUserList = underTest.getAll();
         assertThat(newUserList.toArray()).usingRecursiveFieldByFieldElementComparator().contains(userToSave);
     }
 
     @Test
     void save_IfPrimaryKeyViolated_ShouldThrowDataAccessException() {
         User userToSave = new User("admin","test","test@mail.com","User",0,true);
-        assertThatThrownBy(() -> userDAO.save(userToSave))
+        assertThatThrownBy(() -> underTest.save(userToSave))
                 .isInstanceOf(DataAccessException.class);
 
     }
@@ -95,7 +95,7 @@ class UserDAOTest {
     void save_IfFieldsAreNull_ShouldThrowDataAccessException() {
         User userToSave = new User(null,"test","test@mail.com","User",0,true);
 
-        assertThatThrownBy(() -> userDAO.save(userToSave))
+        assertThatThrownBy(() -> underTest.save(userToSave))
                 .isInstanceOf(DataAccessException.class);
 
     }
@@ -103,23 +103,23 @@ class UserDAOTest {
     @Test
     void update() {
         User userToUpdate = new User("admin","new_admin","a@mail.com","User",0,false);
-        Boolean result = userDAO.update(userToUpdate);
+        Boolean result = underTest.update(userToUpdate);
         assertThat(result).isTrue();
-        List<User> updatedUserList = userDAO.getAll();
+        List<User> updatedUserList = underTest.getAll();
         assertThat(updatedUserList.toArray()).usingRecursiveFieldByFieldElementComparator().contains(userToUpdate);
     }
 
     @Test
     void update_IfNoUserToUpdate_ShouldNotAffectRows() {
         User userToUpdate = new User("no such user","new_admin","a@mail.com","User",0,false);
-        Boolean result = userDAO.update(userToUpdate);
+        Boolean result = underTest.update(userToUpdate);
         assertThat(result).isFalse();
     }
 
     @Test
     void update_IfFieldsAreNull_ShouldThrowDataAccessException() {
         User userToUpdate = new User("admin",null,"a@mail.com","User",0,false);
-        assertThatThrownBy(() -> userDAO.update(userToUpdate))
+        assertThatThrownBy(() -> underTest.update(userToUpdate))
                 .isInstanceOf(DataAccessException.class);
     }
 }

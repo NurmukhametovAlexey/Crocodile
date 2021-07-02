@@ -21,7 +21,7 @@ public class GameDAO {
     }
 
     @Nullable
-    public Game getGameByUUID(String gameUUID) {
+    public Game getByUUID(String gameUUID) {
         return jdbcTemplate.query(
                 "SELECT * FROM Game WHERE gameUUID=?",
                 new BeanPropertyRowMapper<>(Game.class),
@@ -31,7 +31,7 @@ public class GameDAO {
                 .orElse(null);
     }
 
-    public List<Game> getGamesByStatus(GameStatus status) {
+    public List<Game> getListByStatus(GameStatus status) {
         return jdbcTemplate.query(
                 "SELECT * FROM Game WHERE status=?",
                 new BeanPropertyRowMapper<>(Game.class),
@@ -39,7 +39,7 @@ public class GameDAO {
         );
     }
 
-    public List<Game> getActiveGames() {
+    public List<Game> getActiveGamesList() {
         return jdbcTemplate.query(
                 "SELECT * FROM Game WHERE status=?::gamestatus OR status=?::gamestatus",
                 new BeanPropertyRowMapper<>(Game.class),

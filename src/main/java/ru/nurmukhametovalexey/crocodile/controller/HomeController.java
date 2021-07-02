@@ -2,15 +2,13 @@ package ru.nurmukhametovalexey.crocodile.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import ru.nurmukhametovalexey.crocodile.controller.dto.ConnectRequest;
 import ru.nurmukhametovalexey.crocodile.controller.dto.StartRequest;
-import ru.nurmukhametovalexey.crocodile.dao.UserDAO;
 import ru.nurmukhametovalexey.crocodile.model.User;
-import ru.nurmukhametovalexey.crocodile.dao.ComplexDao;
+import ru.nurmukhametovalexey.crocodile.service.DaoService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -18,15 +16,11 @@ import java.security.Principal;
 @Slf4j
 @RestController
 public class HomeController {
-    private final UserDAO userDAO;
-    private final ComplexDao complexDao;
-    private final PasswordEncoder passwordEncoder;
+    private final DaoService daoService;
 
     @Autowired
-    public HomeController(UserDAO userDAO, ComplexDao complexDao, PasswordEncoder passwordEncoder) {
-        this.userDAO = userDAO;
-        this.complexDao = complexDao;
-        this.passwordEncoder = passwordEncoder;
+    public HomeController(DaoService daoService) {
+        this.daoService = daoService;
     }
 
     @GetMapping()
@@ -36,7 +30,7 @@ public class HomeController {
         ModelAndView modelAndView = new ModelAndView("/index");
         if (principal != null) {
             String user = principal.getName();
-            String gameUUID = complexDao.getActiveGameUuidByLogin(principal.getName());
+            String gameUUID = daoService.getActiveGameUuidByLogin(principal.getName());
             modelAndView.addObject("user",user);
             modelAndView.addObject("gameUUID", gameUUID);
             log.info("added user = {} and gameUUID = {}", user, gameUUID);
@@ -79,17 +73,13 @@ public class HomeController {
         if (bindingResult.hasErrors()) {
             return new ModelAndView("/register");
         }
-        else if(userDAO.getUserByLogin(user.getLogin()) != null) {
+        else if(daoService.getUserByLogin(user.getLogin()) != null) {
             log.info("register-submit with user that already exists");
             ModelAndView modelAndView = new ModelAndView("/register");
             modelAndView.addObject("loginUsed", true);
             return modelAndView;
         } else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRole("User");
-            user.setScore(0);
-            user.setEnabled(true);
-            userDAO.save(user);
+            daoService.saveUser(user.getLogin(), user.getPassword(), user.getEmail(), "User");
             ModelAndView modelAndView = new ModelAndView("/login");
             modelAndView.addObject("freshlyCreated", true);
             return modelAndView;
@@ -100,7 +90,7 @@ public class HomeController {
     public ModelAndView getAllUsers(Principal principal) {
         log.info("getAllUsers called");
         ModelAndView modelAndView = new ModelAndView("leaderboard");
-        modelAndView.addObject("users", userDAO.getAllOrderByScoresDesc());
+        modelAndView.addObject("users", daoService.getAllOrderByScoresDesc());
         if (principal != null) {
             modelAndView.addObject("user", principal.getName());
         }

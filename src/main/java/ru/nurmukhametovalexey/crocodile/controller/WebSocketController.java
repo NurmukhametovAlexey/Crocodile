@@ -19,6 +19,7 @@ import ru.nurmukhametovalexey.crocodile.model.Chat;
 import ru.nurmukhametovalexey.crocodile.model.Game;
 import ru.nurmukhametovalexey.crocodile.model.GameStatus;
 import ru.nurmukhametovalexey.crocodile.model.GameUser;
+import ru.nurmukhametovalexey.crocodile.service.DaoService;
 import ru.nurmukhametovalexey.crocodile.service.GameService;
 
 import java.security.Principal;
@@ -29,6 +30,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class WebSocketController {
 
+    private final DaoService daoService;
     private final GameService gameService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -74,13 +76,13 @@ public class WebSocketController {
             gameStartMessage.setMessage(beginMessage);
             simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, gameStartMessage);
 
-            gameService.getComplexDao().saveChatMessage(gameUUID, login, beginMessage);
+            daoService.saveChatMessage(gameUUID, login, beginMessage);
 
-            Game game = gameService.getComplexDao().getGameDAO().getGameByUUID(gameUUID);
+            Game game = daoService.getGameByUUID(gameUUID);
             if (game.getStatus() == GameStatus.NEW) {
                 game.setStatus(GameStatus.IN_PROGRESS);
                 log.info("updating game: {}", game);
-                gameService.getComplexDao().getGameDAO().update(game);
+                daoService.updateGame(game);
             }
         }
         else if (command.equals("cancel game")) {
@@ -91,11 +93,11 @@ public class WebSocketController {
             gameCancelMessage.setMessage(cancelMessage);
             simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, gameCancelMessage);
 
-            gameService.getComplexDao().saveChatMessage(gameUUID, login, cancelMessage);
+            daoService.saveChatMessage(gameUUID, login, cancelMessage);
 
-            Game game = gameService.getComplexDao().getGameDAO().getGameByUUID(gameUUID);
+            Game game = daoService.getGameByUUID(gameUUID);
             game.setStatus(GameStatus.CANCELLED);
-            gameService.getComplexDao().getGameDAO().update(game);
+            daoService.updateGame(game);
 
         }
         else if (command.equals("leave game")) {
@@ -106,18 +108,18 @@ public class WebSocketController {
             playerLeaveMessage.setMessage(leaveMessage);
             simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, playerLeaveMessage);
 
-            gameService.getComplexDao().saveChatMessage(gameUUID, login, leaveMessage);
+            daoService.saveChatMessage(gameUUID, login, leaveMessage);
 
-            GameUser gameUser = gameService.getComplexDao().getGameUserDAO().getByGameUuidAndLogin(gameUUID, login);
-            gameService.getComplexDao().getGameUserDAO().delete(gameUser);
+            GameUser gameUser = daoService.getGameUserByGameUuidAndLogin(gameUUID, login);
+            daoService.deleteGameUser(gameUser);
 
         }
     }
 
     private WebsocketChatMessage handleChatMessage(String gameUUID, WebsocketChatMessage message)
-            throws InvalidGameStateException, GameNotFoundException, DictionaryException {
+            throws InvalidGameStateException, GameNotFoundException {
 
-        Chat chatMessage = gameService.getComplexDao().saveChatMessage(
+        Chat chatMessage = daoService.saveChatMessage(
                 gameUUID, message.getSender(), message.getMessage()
         );
 
@@ -138,11 +140,11 @@ public class WebSocketController {
                 String bountyMessage = entry.getKey() + " gets " + entry.getValue() + " points!";
                 message.setMessage(bountyMessage);
                 simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
-                gameService.getComplexDao().saveChatMessage(gameUUID, message.getSender(),bountyMessage);
+                daoService.saveChatMessage(gameUUID, message.getSender(),bountyMessage);
             }
             String finishMessage = "GAME FINISHED!";
             message.setMessage(finishMessage);
-            gameService.getComplexDao().saveChatMessage(gameUUID, message.getSender(), finishMessage);
+            daoService.saveChatMessage(gameUUID, message.getSender(), finishMessage);
         }
 
         return message;

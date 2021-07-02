@@ -20,7 +20,7 @@ public class GameUserDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<GameUser> getGameUserByGameUuidAndRole(String gameUUID, PlayerRole playerRole) {
+    public List<GameUser> getByGameUuidAndRole(String gameUUID, PlayerRole playerRole) {
         return jdbcTemplate.query(
                 "SELECT * FROM GameUser WHERE gameUUID=? AND playerRole=?::playerstatus",
                 new BeanPropertyRowMapper<>(GameUser.class),
@@ -28,7 +28,7 @@ public class GameUserDAO {
         );
     }
 
-    public List<GameUser> getGameUserByLogin(String login) {
+    public List<GameUser> getByLogin(String login) {
         return jdbcTemplate.query(
                 "SELECT * FROM GameUser WHERE login=?",
                 new BeanPropertyRowMapper<>(GameUser.class),

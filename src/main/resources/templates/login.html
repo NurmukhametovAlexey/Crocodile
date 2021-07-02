@@ -51,7 +51,7 @@
 <h1>Login page</h1>
   <br/>
 <p th:if="${freshlyCreated}" class="info">ACCOUNT SUCCESSFULLY CREATED!</p>
-<p th:if="${loginError}" class="error">Wrong user or password</p>
+<p th:if="${loginError}" class="error">Wrong login or password</p>
 <form th:action="@{/login}" method="post">
   <label for="username">Username</label>:
   <input type="text" id="username" name="username" autofocus="autofocus" /> <br />

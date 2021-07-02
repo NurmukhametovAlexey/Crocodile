@@ -16,12 +16,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class DictionaryDAOTest {
 
     private final JdbcTemplate jdbcTemplate;
-    private final DictionaryDAO dictionaryDAO;
+    private final DictionaryDAO underTest;
 
     @Autowired
     public DictionaryDAOTest(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        dictionaryDAO = new DictionaryDAO(jdbcTemplate);
+        underTest = new DictionaryDAO(jdbcTemplate);
     }
 
     @Test
@@ -29,53 +29,53 @@ class DictionaryDAOTest {
         Dictionary[] expected = new Dictionary[] {
                 new Dictionary("easy", 1), new Dictionary("medium", 2), new Dictionary("hard", 3)
         };
-        List<Dictionary> result = dictionaryDAO.getAll();
+        List<Dictionary> result = underTest.getAll();
         assertThat(result.toArray()).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
     }
 
     @Test
     void getAll_IfNoWords_ShouldReturnEmptyList() {
         jdbcTemplate.update("delete from dictionary");
-        List<Dictionary> result = dictionaryDAO.getAll();
+        List<Dictionary> result = underTest.getAll();
         assertThat(result.toArray()).isEmpty();
     }
 
     @Test
     void getWordsByDifficulty() {
         Dictionary[] expected = new Dictionary[] {new Dictionary("easy", 1)};
-        List<Dictionary> result = dictionaryDAO.getWordsByDifficulty(1);
+        List<Dictionary> result = underTest.getListByDifficulty(1);
         assertThat(result.toArray()).usingRecursiveFieldByFieldElementComparator().isEqualTo(expected);
     }
 
     @Test
     void getWordsByDifficulty_IfNoWords_ShouldReturnEmptyList() {
-        List<Dictionary> result = dictionaryDAO.getWordsByDifficulty(-1);
+        List<Dictionary> result = underTest.getListByDifficulty(-1);
         assertThat(result.toArray()).isEmpty();
     }
 
     @Test
     void getRandomWordByDifficulty() {
         Dictionary expected = new Dictionary("easy", 1);
-        Dictionary result = dictionaryDAO.getRandomWordByDifficulty(1);
+        Dictionary result = underTest.getRandomWordByDifficulty(1);
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void getRandomWordByDifficulty_IfNoWords_ShouldReturnNull() {
-        Dictionary result = dictionaryDAO.getRandomWordByDifficulty(-1);
+        Dictionary result = underTest.getRandomWordByDifficulty(-1);
         assertThat(result).isNull();
     }
 
     @Test
     void getDifficultyByWord() {
         Integer expected = 1;
-        Integer result = dictionaryDAO.getDifficultyByWord("easy");
+        Integer result = underTest.getDifficultyByWord("easy");
         assertThat(result).isEqualTo(expected);
     }
 
     @Test
     void getDifficultyByWord_IfNoWord_ShouldReturnNull() {
-        Integer result = dictionaryDAO.getDifficultyByWord("no such word");
+        Integer result = underTest.getDifficultyByWord("no such word");
         assertThat(result).isNull();
     }
 }

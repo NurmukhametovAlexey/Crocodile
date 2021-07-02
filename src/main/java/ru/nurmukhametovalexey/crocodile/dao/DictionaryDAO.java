@@ -28,7 +28,7 @@ public class DictionaryDAO {
         );
     }
 
-    public List<Dictionary> getWordsByDifficulty(int difficulty) {
+    public List<Dictionary> getListByDifficulty(int difficulty) {
         return  jdbcTemplate.query(
                 "SELECT * FROM Dictionary WHERE difficulty=?",
                 new BeanPropertyRowMapper<>(Dictionary.class),
@@ -37,14 +37,13 @@ public class DictionaryDAO {
     }
 
     @Nullable
-    public Dictionary getRandomWordByDifficulty(int difficulty) {
-       List<Dictionary> dictionaryList = getWordsByDifficulty(difficulty);
+    public Dictionary getRandomWordByDifficulty(Integer difficulty) {
+       List<Dictionary> dictionaryList = getListByDifficulty(difficulty);
        try {
            return dictionaryList.get(ThreadLocalRandom.current().nextInt(0, dictionaryList.size()));
        } catch (IllegalArgumentException e) {
            return null;
        }
-
     }
 
     @Nullable

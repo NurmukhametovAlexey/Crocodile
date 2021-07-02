@@ -25,71 +25,64 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class ComplexDaoTest {
 
     private final JdbcTemplate jdbcTemplate;
-    private final ComplexDao complexDao;
+    private final ComplexDao underTest;
 
     @Autowired
     public ComplexDaoTest(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        complexDao = new ComplexDao(jdbcTemplate, new UserDAO(jdbcTemplate), new GameDAO(jdbcTemplate),
+        underTest = new ComplexDao(jdbcTemplate, new UserDAO(jdbcTemplate), new GameDAO(jdbcTemplate),
                 new GameUserDAO(jdbcTemplate), new DictionaryDAO(jdbcTemplate), new ChatDAO(jdbcTemplate));
     }
 
     @Test
     void getDifficultyByGameUUID() {
         Integer expected = 1;
-        Integer result = complexDao.getDifficultyByGameUUID("uuid1");
+        Integer result = underTest.getDifficultyByGameUUID("uuid1");
         assertThat(result).isEqualTo(expected);
     }
 
     @Test
     void getDifficultyByGameUUID_IfNoGame_ShouldReturnNull() {
-        Integer result = complexDao.getDifficultyByGameUUID("no such uuid");
+        Integer result = underTest.getDifficultyByGameUUID("no such uuid");
         assertThat(result).isNull();
     }
 
     @Test
     void getBountyByGameUUIDAndRole() {
-        Integer result = complexDao.getBountyByGameUUIDAndRole("uuid1", PlayerRole.PAINTER);
+        Integer result = underTest.getBountyByGameUUIDAndRole("uuid1", PlayerRole.PAINTER);
         assertThat(result).isEqualTo(1);
 
-        Integer result2 = complexDao.getBountyByGameUUIDAndRole("uuid2", PlayerRole.GUESSER);
+        Integer result2 = underTest.getBountyByGameUUIDAndRole("uuid2", PlayerRole.GUESSER);
         assertThat(result2).isEqualTo(2);
     }
 
     @Test
     void getBountyByGameUUIDAndRole_IfNoGame_ShouldReturnNull() {
-        Integer result = complexDao.getBountyByGameUUIDAndRole("no such uuid", PlayerRole.GUESSER);
+        Integer result = underTest.getBountyByGameUUIDAndRole("no such uuid", PlayerRole.GUESSER);
         assertThat(result).isNull();
     }
 
     @Test
     void getActiveGameUuidByLogin() {
-        String result = complexDao.getActiveGameUuidByLogin("admin");
+        String result = underTest.getActiveGameUuidByLogin("admin");
         assertThat(result).isEqualTo("uuid1");
     }
 
     @Test
     void getActiveGameUuidByLogin_IfNoGames_ShouldReturnNull() {
-        String result = complexDao.getActiveGameUuidByLogin("qwe");
+        String result = underTest.getActiveGameUuidByLogin("qwe");
         assertThat(result).isNull();
     }
 
     @Test
     void getActiveGameUuidByLogin_IfNoLogin_ShouldReturnNull() {
-        String result = complexDao.getActiveGameUuidByLogin("no such login");
+        String result = underTest.getActiveGameUuidByLogin("no such login");
         assertThat(result).isNull();
     }
 
     @Test
-    void saveChatMessage() {
-        Chat result = complexDao.saveChatMessage("uuid2", "admin", "hello");
-        Chat savedChat = complexDao.getChatDAO().getLastMessageByGameUUID("uuid2");
-        assertThat(result).usingRecursiveComparison().ignoringFieldsOfTypes(LocalDateTime.class).isEqualTo(savedChat);
-    }
-
-    @Test
     void getGameHistoryByLogin() {
-        List<GameHistory> result = complexDao.getGameHistoryByLogin("qwe");
+        List<GameHistory> result = underTest.getGameHistoryByLogin("qwe");
         List<GameHistory> expected = Arrays.asList(
                 new GameHistory("01-07-21 10:10", "01-07-21 10:12", "uuid2", PlayerRole.PAINTER, true)
         );

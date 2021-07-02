@@ -11,6 +11,7 @@ import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
 import ru.nurmukhametovalexey.crocodile.model.Chat;
 import ru.nurmukhametovalexey.crocodile.model.Game;
 import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
+import ru.nurmukhametovalexey.crocodile.service.DaoService;
 import ru.nurmukhametovalexey.crocodile.service.GameService;
 
 import java.security.Principal;
@@ -23,15 +24,15 @@ import java.time.LocalDateTime;
 @RequestMapping("/game")
 public class GameController {
     private final GameService gameService;
+    private final DaoService daoService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("/{gameUUID}")
     public ModelAndView show(@PathVariable String gameUUID, Principal principal, RedirectAttributes attributes) {
 
         try {
-            Game game = gameService.getComplexDao().getGameDAO().getGameByUUID(gameUUID);
-            PlayerRole playerRole = gameService.getComplexDao().getGameUserDAO()
-                    .getByGameUuidAndLogin(gameUUID, principal.getName()).getPlayerRole();
+            Game game = daoService.getGameByUUID(gameUUID);
+            PlayerRole playerRole = daoService.getGameUserByGameUuidAndLogin(gameUUID, principal.getName()).getPlayerRole();
 
             ModelAndView modelAndView = new ModelAndView("/game");
             modelAndView.addObject("game", game);
@@ -89,7 +90,7 @@ public class GameController {
         chatMessage.setLogin(principal.getName());
         chatMessage.setTimeSent(LocalDateTime.now());
 
-        chatMessage = gameService.getComplexDao().getChatDAO().getChatByGameUUID(game.getGameUUID()).stream()
+        chatMessage = daoService.getChatListByGameUUID(game.getGameUUID()).stream()
                 .filter(msg -> msg.getLogin().equals(principal.getName()))
                 .findAny()
                 .orElse(null);

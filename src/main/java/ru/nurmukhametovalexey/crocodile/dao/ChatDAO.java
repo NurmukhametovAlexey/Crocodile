@@ -20,7 +20,7 @@ public class ChatDAO {
     }
 
     @Nullable
-    public List<Chat> getChatByGameUUID(String gameUUID) {
+    public List<Chat> getListByGameUUID(String gameUUID) {
         return jdbcTemplate.query(
                 "SELECT * FROM chat WHERE gameUUID=? ORDER BY timeSent ASC",
                 new BeanPropertyRowMapper<>(Chat.class),
