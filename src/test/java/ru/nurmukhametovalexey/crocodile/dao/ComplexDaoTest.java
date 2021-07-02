@@ -5,11 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
-import ru.nurmukhametovalexey.crocodile.model.Chat;
 import ru.nurmukhametovalexey.crocodile.model.GameHistory;
 import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 

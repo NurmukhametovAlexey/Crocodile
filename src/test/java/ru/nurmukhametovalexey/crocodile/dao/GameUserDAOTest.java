@@ -34,7 +34,7 @@ class GameUserDAOTest {
     @Test
     void getGameUserByGameUuidAndRole() {
         List<GameUser> expected = Arrays.asList(
-                new GameUser("admin","uuid2", PlayerRole.GUESSER)
+                new GameUser("uuid2", "admin", PlayerRole.GUESSER)
         );
         List<GameUser> result = underTest.getByGameUuidAndRole("uuid2", PlayerRole.GUESSER);
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
@@ -49,8 +49,8 @@ class GameUserDAOTest {
     @Test
     void getGameUserByLogin() {
         List<GameUser> expected = Arrays.asList(
-                new GameUser("admin","uuid1", PlayerRole.PAINTER),
-                new GameUser("admin","uuid2", PlayerRole.GUESSER)
+                new GameUser("uuid1","admin", PlayerRole.PAINTER),
+                new GameUser("uuid2","admin", PlayerRole.GUESSER)
         );
         List<GameUser> result = underTest.getByLogin("admin");
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
@@ -64,7 +64,7 @@ class GameUserDAOTest {
 
     @Test
     void getByGameUuidAndLogin() {
-        GameUser expected = new GameUser("admin", "uuid1", PlayerRole.PAINTER);
+        GameUser expected = new GameUser("uuid1", "admin", PlayerRole.PAINTER);
         GameUser result = underTest.getByGameUuidAndLogin("uuid1", "admin");
         assertThat(result).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -77,7 +77,7 @@ class GameUserDAOTest {
 
     @Test
     void save() {
-        GameUser gameUserToSave = new GameUser("admin","uuid3", PlayerRole.PAINTER);
+        GameUser gameUserToSave = new GameUser("uuid3", "admin", PlayerRole.PAINTER);
         Boolean result = underTest.save(gameUserToSave);
         assertThat(result).isTrue();
         GameUser savedGameUser = underTest.getByGameUuidAndLogin("uuid3", "admin");
@@ -86,21 +86,21 @@ class GameUserDAOTest {
 
     @Test
     void save_IfPrimaryKeyViolated_ShouldThrowDataAccessException() {
-        GameUser gameUserToSave = new GameUser("admin","uuid1", PlayerRole.GUESSER);
+        GameUser gameUserToSave = new GameUser("uuid1", "admin", PlayerRole.GUESSER);
         assertThatThrownBy(() -> underTest.save(gameUserToSave))
                 .isInstanceOf(DataAccessException.class);
     }
 
     @Test
     void save_IfForeignKeyViolated_ShouldThrowDataAccessException() {
-        GameUser gameUserToSave = new GameUser("no such login","no such uuid", PlayerRole.GUESSER);
+        GameUser gameUserToSave = new GameUser("no such uuid", "no such login", PlayerRole.GUESSER);
         assertThatThrownBy(() -> underTest.save(gameUserToSave))
                 .isInstanceOf(DataAccessException.class);
     }
 
     @Test
     void update() {
-        GameUser gameUserToUpdate = new GameUser("admin","uuid1", PlayerRole.GUESSER);
+        GameUser gameUserToUpdate = new GameUser("uuid1", "admin", PlayerRole.GUESSER);
         Boolean result = underTest.update(gameUserToUpdate);
         assertThat(result).isTrue();
         GameUser updatedGameUser = underTest.getByGameUuidAndLogin("uuid1", "admin");
@@ -109,7 +109,7 @@ class GameUserDAOTest {
 
     @Test
     void update_IfNoGameUserToUpdate_ShouldNotAffectRows() {
-        GameUser gameUserToUpdate = new GameUser("no such login","uuid1", PlayerRole.PAINTER);
+        GameUser gameUserToUpdate = new GameUser("uuid1", "no such login", PlayerRole.PAINTER);
         Boolean result = underTest.update(gameUserToUpdate);
         assertThat(result).isFalse();
     }
@@ -125,7 +125,7 @@ class GameUserDAOTest {
 
     @Test
     void delete_IfNoGameUserToDelete_ShouldNotAffectRows() {
-        GameUser gameUserToDelete = underTest.getByGameUuidAndLogin("no such login", "admin");
+        GameUser gameUserToDelete = underTest.getByGameUuidAndLogin("no such uuid", "admin");
         Boolean result = underTest.delete(gameUserToDelete);
         assertThat(result).isFalse();
     }

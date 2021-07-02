@@ -48,8 +48,8 @@ public class DaoService {
 
     public User updateUser(String login, String newPassword, String newEmail) {
 
-        User initialUser = getUserByLogin(login);
-                if (newPassword != null && !newPassword.isBlank()) {
+        User initialUser = userDAO.getByLogin(login);
+        if (newPassword != null && !newPassword.isBlank()) {
             initialUser.setPassword(passwordEncoder.encode(newPassword));
         }
         if (newEmail != null && !newEmail.isBlank()) {
@@ -63,7 +63,7 @@ public class DaoService {
         return userDAO.update(user);
     }
 
-    public List<User> getAllOrderByScoresDesc() {
+    public List<User> getAllUsersOrderByScoresDesc() {
         return  userDAO.getAllOrderByScoresDesc();
     }
 
