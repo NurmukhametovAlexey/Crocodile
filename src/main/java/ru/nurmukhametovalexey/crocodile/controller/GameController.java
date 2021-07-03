@@ -128,7 +128,7 @@ public class GameController {
     public ResponseEntity uploadCanvas(@PathVariable String gameUUID, @RequestBody String rawBase64Image) {
 
 
-        log.info("upload canvas, image:  {}", rawBase64Image);
+        //log.info("upload canvas, image:  {}", rawBase64Image);
         try {
             gameService.uploadCanvasImage(rawBase64Image, gameUUID);
         } catch (IOException e) {
@@ -140,7 +140,7 @@ public class GameController {
     @GetMapping("/{gameUUID}/download-canvas")
     public @ResponseBody String downloadCanvas(@PathVariable String gameUUID) {
         String canvasImage = gameService.downloadCanvasImage(gameUUID);
-        log.info("canvas image: {}", canvasImage);
+        //log.info("canvas image: {}", canvasImage);
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode imageJson = mapper.createObjectNode();
         imageJson.put("image", canvasImage);

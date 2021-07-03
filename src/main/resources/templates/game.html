@@ -16,7 +16,6 @@
         let chat = "[[${chat}]]";
         let secretWord = "[[${game.getWord()}]]";
 
-        let players_count = "[[${players_count}]]";
     </script>
 
     <!--    libs for stomp and sockjs-->
@@ -94,6 +93,7 @@
         [[${msg}]] <br/>
     </th:block>
 </div>
+
 
 <form id="form-chat" class="game-chat-form">
     <input type="text" id="form-chat-input"  placeholder="Enter your message"/>

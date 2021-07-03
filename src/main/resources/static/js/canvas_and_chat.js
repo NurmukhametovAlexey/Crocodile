@@ -114,8 +114,9 @@ function downloadCanvas() {
 }
 
 function writeMessage(message){
-    document.getElementById("chat-box").innerHTML =
-        document.getElementById("chat-box").innerHTML + message + "<br />";
+    let chatbox = document.getElementById("chat-box");
+    chatbox.innerHTML = chatbox.innerHTML + message + "<br />";
+    chatbox.scrollTop = chatbox.scrollHeight;
 }
 
 function hideElement(id) {

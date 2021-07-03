@@ -5,6 +5,7 @@ $( document ).ready(function() {
     }
 
     console.log(chat);
+    document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
 
     setTimeout(downloadCanvas(), 1000);
 
