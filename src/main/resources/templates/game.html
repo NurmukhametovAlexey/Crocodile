@@ -57,10 +57,12 @@
             </li>
         </div>
         <div class="navbar-nav ml-auto">
-            <li th:if="${userRole} == 'PAINTER'" class="nav-item">
+            <li th:if="${userRole == 'PAINTER' && game.getStatus().toString() != 'FINISHED'
+            && game.getStatus().toString() != 'CANCELLED'}" class="nav-item">
                 <a class="nav-link" id="link-game-cancel" href="/">Cancel game</a>
             </li>
-            <li th:if="${userRole} != 'PAINTER'" class="nav-item">
+            <li th:if="${userRole != 'PAINTER' && game.getStatus().toString() != 'FINISHED'
+            && game.getStatus().toString() != 'CANCELLED'}" class="nav-item">
                 <a class="nav-link" id="link-game-leave" href="/">Leave</a>
             </li>
             <li th:if="${user != null}" class="nav-item">

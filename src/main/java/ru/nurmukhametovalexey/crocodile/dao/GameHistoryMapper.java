@@ -20,7 +20,7 @@ public class GameHistoryMapper implements RowMapper {
         gameHistory.setTimeFinished(resultSet.getObject("timeFinished", LocalDateTime.class).format(formatter));
         gameHistory.setGameUUID(resultSet.getString("gameUUID"));
         gameHistory.setPlayerRole(PlayerRole.valueOf(resultSet.getString("playerRole")));
-        gameHistory.setWin(resultSet.getObject("status", GameStatus.class).equals(GameStatus.FINISHED));
+        gameHistory.setWin(GameStatus.valueOf(resultSet.getString("status")).equals(GameStatus.FINISHED));
 
         return gameHistory;
     }
