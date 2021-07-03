@@ -6,7 +6,7 @@ $( document ).ready(function() {
 
     console.log(chat);
 
-    downloadCanvas();
+    setTimeout(downloadCanvas(), 1000);
 
     if (gameStatus === "IN_PROGRESS") {
         beginTheGame();

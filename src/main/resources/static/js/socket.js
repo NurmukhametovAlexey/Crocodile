@@ -52,6 +52,13 @@ function processWsMessage(response) {
             endTheGame();
             stompClient.disconnect();
         }
+        else if (data.command === "upload canvas") {
+            console.log("upload canvas command message");
+            uploadCanvas();
+            /*if(gameStatus === "IN_PROGRESS") {
+                uploadCanvas();
+            }*/
+        }
     };
 
 }

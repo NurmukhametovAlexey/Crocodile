@@ -91,6 +91,10 @@ public class DaoService {
         return gameDAO.update(game);
     }
 
+    public List<GameUser> getGameUserListByGameUuid(String gameUUID) {
+        return gameUserDAO.getListByGameUuid(gameUUID);
+    }
+
     @Nullable
     public GameUser getGameUserByGameUuidAndLogin(String gameUUID, String login) {
         return gameUserDAO.getByGameUuidAndLogin(gameUUID, login);

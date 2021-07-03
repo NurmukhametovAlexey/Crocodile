@@ -2,6 +2,7 @@ package ru.nurmukhametovalexey.crocodile.dao;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.nurmukhametovalexey.crocodile.model.GameHistory;
+import ru.nurmukhametovalexey.crocodile.model.GameStatus;
 import ru.nurmukhametovalexey.crocodile.model.PlayerRole;
 
 import java.sql.ResultSet;
@@ -19,6 +20,7 @@ public class GameHistoryMapper implements RowMapper {
         gameHistory.setTimeFinished(resultSet.getObject("timeFinished", LocalDateTime.class).format(formatter));
         gameHistory.setGameUUID(resultSet.getString("gameUUID"));
         gameHistory.setPlayerRole(PlayerRole.valueOf(resultSet.getString("playerRole")));
+        gameHistory.setWin(resultSet.getObject("status", GameStatus.class).equals(GameStatus.FINISHED));
 
         return gameHistory;
     }

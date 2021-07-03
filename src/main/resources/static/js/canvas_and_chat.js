@@ -73,22 +73,24 @@ function disableCanvas() {
 
 function uploadCanvas() {
     //let canvas_image = canvas_context.getImageData(0,0, W, H);
-    let canvas_image = canvas.source[0].toDataURL('image/png');
-    console.log("uploading canvas...");
-    $.ajax({
-        url: "/game/" + gameUUID + "/upload-canvas",
-        type: "POST",
-        data: canvas_image,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log("canvas successfully uploaded");
-            // .. do something
-        },
-        error: function(jqXHR, textStatus, errorMessage) {
-            console.log(errorMessage); // Optional
-        }
-    });
+    if(canvas.source) {
+        let canvas_image = canvas.source[0].toDataURL('image/png');
+        console.log("uploading canvas...");
+        $.ajax({
+            url: "/game/" + gameUUID + "/upload-canvas",
+            type: "POST",
+            data: canvas_image,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log("canvas successfully uploaded");
+                // .. do something
+            },
+            error: function(jqXHR, textStatus, errorMessage) {
+                console.log(errorMessage); // Optional
+            }
+        });
+    }
 }
 
 function downloadCanvas() {

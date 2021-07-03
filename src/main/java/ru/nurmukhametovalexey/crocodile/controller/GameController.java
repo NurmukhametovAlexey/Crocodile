@@ -39,6 +39,11 @@ public class GameController {
     @GetMapping("/{gameUUID}")
     public ModelAndView show(@PathVariable String gameUUID, Principal principal, RedirectAttributes attributes) {
 
+        WebsocketCommandMessage websocketCommandMessage = new WebsocketCommandMessage();
+        websocketCommandMessage.setCommand("upload canvas");
+        log.info("sending upload canvas to: /topic/game-progress/{}", gameUUID);
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID,
+                websocketCommandMessage);
         try {
             Game game = daoService.getGameByUUID(gameUUID);
             PlayerRole playerRole = daoService.getGameUserByGameUuidAndLogin(gameUUID, principal.getName()).getPlayerRole();
@@ -80,6 +85,7 @@ public class GameController {
     @PostMapping("/connect")
     public ModelAndView connect(@ModelAttribute("connectRequest") ConnectRequest connectRequest,
                                 Principal principal, RedirectAttributes attributes) {
+
         log.info("connect game request: {}", connectRequest);
 
         if (connectRequest.getPlayerRole() == null) {

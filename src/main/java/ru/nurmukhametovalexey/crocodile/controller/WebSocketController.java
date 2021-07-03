@@ -2,7 +2,6 @@ package ru.nurmukhametovalexey.crocodile.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -13,7 +12,6 @@ import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketCanvasMessage;
 import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketChatMessage;
 import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketCommandMessage;
 import ru.nurmukhametovalexey.crocodile.controller.dto.WebsocketMessage;
-import ru.nurmukhametovalexey.crocodile.exception.DictionaryException;
 import ru.nurmukhametovalexey.crocodile.exception.GameNotFoundException;
 import ru.nurmukhametovalexey.crocodile.exception.InvalidGameStateException;
 import ru.nurmukhametovalexey.crocodile.model.Chat;
@@ -116,6 +114,10 @@ public class WebSocketController {
             GameUser gameUser = daoService.getGameUserByGameUuidAndLogin(gameUUID, login);
             daoService.deleteGameUser(gameUser);
 
+        }
+        else if(command.equals("upload canvas")) {
+            log.info("upload canvas message");
+            // do nothing
         }
     }
 

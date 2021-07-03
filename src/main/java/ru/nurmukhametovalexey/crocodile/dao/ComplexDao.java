@@ -84,9 +84,11 @@ public class ComplexDao {
                 new GameHistoryMapper(), login
         );
         for (GameHistory gh: gameHistoryList) {
-            Boolean win = gh.getPlayerRole().equals(PlayerRole.PAINTER)
-                    ||chatDAO.getLastMessageByGameUUID(gh.getGameUUID()).getLogin().equals(login);
-            gh.setWin(win);
+            if(gh.getWin()) {
+                Boolean win = gh.getPlayerRole().equals(PlayerRole.PAINTER)
+                        ||chatDAO.getLastMessageByGameUUID(gh.getGameUUID()).getLogin().equals(login);
+                gh.setWin(win);
+            }
             log.info("game history: {}", gh);
         }
 

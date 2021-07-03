@@ -184,4 +184,23 @@ public class GameService {
             return null;
         }
     }
+
+    public Map<String, Integer> getPlayersCount(String gameUUID) {
+        Map<String, Integer> playerCountMap = new HashMap<>();
+        String painter = PlayerRole.PAINTER.toString();
+        String guesser = PlayerRole.GUESSER.toString();
+        playerCountMap.put(painter, 0);
+        playerCountMap.put(guesser, 0);
+
+        daoService.getGameUserListByGameUuid(gameUUID).stream()
+            .forEach(gameUser -> {
+                if(gameUser.getPlayerRole().equals(PlayerRole.PAINTER)){
+                    playerCountMap.replace(painter, playerCountMap.get(painter) + 1);
+                } else {
+                    playerCountMap.replace(guesser, playerCountMap.get(guesser) + 1);
+                }
+            });
+        log.info("players count map: {}", playerCountMap);
+        return  playerCountMap;
+    }
 }
