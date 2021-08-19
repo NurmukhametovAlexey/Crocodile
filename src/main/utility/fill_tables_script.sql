@@ -17,3 +17,9 @@ create temporary table t10 (w varchar(20));
 copy t10 FROM 'D:\Programming\IdeaProjects\Crocodile\src\main\utility\difficulty_10_words.txt';
 insert into dictionary(word, difficulty) select w, 10 from t10 ON CONFLICT DO NOTHING;
 drop table t10;
+
+
+create temporary table rus (tmp1 int, w varchar, tmp2 real, tmp3 int);
+copy rus FROM 'D:\Programming\IdeaProjects\Crocodile\src\main\utility\russian_words.txt'  DELIMITER ',';
+insert into dictionary(word, difficulty) select w, 4 from rus ON CONFLICT DO NOTHING;
+drop table rus;

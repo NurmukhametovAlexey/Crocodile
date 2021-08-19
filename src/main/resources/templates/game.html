@@ -82,7 +82,7 @@
 <div id="game-secret-word"
     style="position: fixed;
     font-size: xxx-large;
-    top: 10%;
+    top: 7%;
     left: 26%;">
 </div>
 
@@ -109,7 +109,7 @@
 <canvas id="canvas-game"
         style="position: fixed;
         left: 5%;
-        top: 20%;">
+        top: 15%;">
 </canvas>
 
 <script>
@@ -149,16 +149,34 @@
 
 </script>
 
+<div id="canvas-color-pick" style="
+        display: none;
+        position: fixed;
+        left: 7%;
+        top: 88%;">
+
+    <input id="canvas-width-range" type="range" min="2" max="22" step="2" value="2">
+    <canvas id="white-color" class="color-tile"></canvas>
+    <canvas id="yellow-color" class="color-tile"></canvas>
+    <canvas id="green-color" class="color-tile"></canvas>
+    <canvas id="red-color" class="color-tile"></canvas>
+    <canvas id="blue-color" class="color-tile"></canvas>
+    <canvas id="black-color" class="color-tile"></canvas>
+
+</div>
+
+
 <button th:if="${userRole == 'PAINTER'}" id="btn-canvas-clear" style="
         display: none;
         position: fixed;
-        left: 5%;
+        left: 40%;
         top: 90%;" class="btn-game">
     Clear canvas
 </button>
 
+
 <button th:if="${userRole == 'PAINTER' && game.getStatus().toString() == 'NEW'}" id="btn-start-game" style="position: fixed;
-        left: 30%;
+        left: 40%;
         top: 90%;" class="btn-game">
     Start the game
 </button>

@@ -113,7 +113,7 @@ li, a {
     height: 60%;
     position: fixed;
     left: 65%;
-    top: 20%;
+    top: 15%;
     margin: auto;
     border: 2px solid black;
     overflow-y: scroll;
@@ -126,7 +126,7 @@ li, a {
     height: 15%;
     position: fixed;
     left: 40%;
-    top: 82%;
+    top: 80%;
     text-align: center;
 }
 .btn-game {
@@ -142,4 +142,9 @@ li, a {
     font-size: xx-large;
     color: black;
     margin: auto;
+}
+.color-tile {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
 }

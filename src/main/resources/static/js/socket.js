@@ -26,7 +26,15 @@ function processWsMessage(response) {
 
         drawLine(data.x_start, data.y_start, data.x_finish, data.y_finish);
 
-    } else if (data.type == "chat") {
+    } else if (data.type == "canvas color") {
+        console.log("canvas color");
+        canvas_context.strokeStyle = data.color;
+    }
+    else if (data.type == "canvas width") {
+        console.log("canvas width");
+        canvas_context.lineWidth = data.width;
+    }
+    else if (data.type == "chat") {
 
         console.log(data);
         writeMessage(data.message);

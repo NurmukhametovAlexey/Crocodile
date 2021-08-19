@@ -39,6 +39,30 @@ $( document ).ready(function() {
 
     });
 
+    $("#white-color").click(function (event) {
+        changeColor("white");
+    });
+    $("#yellow-color").click(function (event) {
+        changeColor("yellow");
+    });
+    $("#green-color").click(function (event) {
+        changeColor("green");
+    });
+    $("#red-color").click(function (event) {
+        changeColor("red");
+    });
+    $("#blue-color").click(function (event) {
+        changeColor("blue");
+    });
+    $("#black-color").click(function (event) {
+        changeColor("black");
+    });
+
+
+    $("#canvas-width-range").on('input', function (event) {
+        changeWidth();
+    });
+
     $("#btn-start-game").click(function (event) {
         event.preventDefault();
 

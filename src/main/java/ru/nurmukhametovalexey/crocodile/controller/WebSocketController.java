@@ -141,6 +141,7 @@ public class WebSocketController {
             simpMessagingTemplate.convertAndSend("/topic/game-progress/" + gameUUID, message);
 
             Map<String, Integer> winnersBounty = gameService.increaseWinnersScore(gameUUID, message.getSender());
+            log.info("winnersBounty: {}", winnersBounty);
             for (var entry : winnersBounty.entrySet()) {
                 String bountyMessage = entry.getKey() + " gets " + entry.getValue() + " points!";
                 message.setMessage(bountyMessage);
